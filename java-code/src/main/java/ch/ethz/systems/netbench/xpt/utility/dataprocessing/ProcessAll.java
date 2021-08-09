@@ -15,7 +15,7 @@ public class ProcessAll {
         ////////////////////
         // XPANDER
 
-        System.out.println("Xpander FL gap...");
+        System.err.println("Xpander FL gap...");
 
         String[] xpanderFLGapMainFolders = new String[] {
                 "xpander_n128_ecmpfirst_flgap\\d8",
@@ -50,11 +50,11 @@ public class ProcessAll {
         ////////////////////
         // FAT TREE
 
-        System.out.println("Fat-tree...");
+        System.err.println("Fat-tree...");
 
         // HEADER
-        // System.out.println("\tAll flows\t\t\t\t\t<= 1MB flows\t\t\t\t\t<= 10MB flows\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
-        // System.out.println("Load\tAverage FCT (ms)\t99th FCT (ms)\t99.9th FCT (ms)\tFl. compl.\tTot. all flows\tAverage FCT (ms)\t99th FCT (ms)\t99.9th FCT (ms)\tFl. compl.\tTot. <= 1MB flows\tAverage FCT (ms)\t99th FCT (ms)\t99.9th FCT (ms)\tFl. compl.\tTot <= 10MB flows\tAvg. throughput flows >= 10MB (Gbit/s)\t99th of avg. throughput of flows >= 10MB (Gbit/s)\tMean non-server port utilization (%)\t99th non-server port utilization (%)\t99.9th non-server port utilization (%)\tMax. non-server port utilization (%)\tMean server port utilization (%)\t99th server port utilization (%)\t99.9th server port utilization (%)\tMax. server port utilization (%)");
+        // System.err.println("\tAll flows\t\t\t\t\t<= 1MB flows\t\t\t\t\t<= 10MB flows\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+        // System.err.println("Load\tAverage FCT (ms)\t99th FCT (ms)\t99.9th FCT (ms)\tFl. compl.\tTot. all flows\tAverage FCT (ms)\t99th FCT (ms)\t99.9th FCT (ms)\tFl. compl.\tTot. <= 1MB flows\tAverage FCT (ms)\t99th FCT (ms)\t99.9th FCT (ms)\tFl. compl.\tTot <= 10MB flows\tAvg. throughput flows >= 10MB (Gbit/s)\t99th of avg. throughput of flows >= 10MB (Gbit/s)\tMean non-server port utilization (%)\t99th non-server port utilization (%)\t99.9th non-server port utilization (%)\tMax. non-server port utilization (%)\tMean server port utilization (%)\t99th server port utilization (%)\t99.9th server port utilization (%)\tMax. server port utilization (%)");
 
         String[] fatTreeMainFolders = new String[] {
                 "fat_tree",
@@ -80,7 +80,7 @@ public class ProcessAll {
         ////////////////////
         // XPANDER
 
-        System.out.println("Xpander...");
+        System.err.println("Xpander...");
 
         String[] xpanderMainFolders = new String[] {
                 "xpander_n128\\d8",
@@ -111,7 +111,7 @@ public class ProcessAll {
         ////////////////////
         // JELLYFISH 10 SEEDS
 
-        System.out.println("Jellyfish N128 D8/D16...");
+        System.err.println("Jellyfish N128 D8/D16...");
 
         String[] jellyfishRoutings = new String[] {
                 "ecmp_uniform",
@@ -136,18 +136,18 @@ public class ProcessAll {
         };
 
         for (int i = 0; i < 4; i++) {
-            System.out.print(i + "/4...");
+            System.err.print(i + "/4...");
             String mainFolder = jellyfishMainFolders[i];
             String prefix = jellyfishPrefixes[i];
             for (String routing : jellyfishRoutings) {
-                //System.out.println(routing + "...");
+                //System.err.println(routing + "...");
                 String fileName = mainFolder.replace("\\", "_") + "_" + routing;
                 String res = CalculateAverageStatistics.process(base + mainFolder, prefix, routing);
                 FileWriter writer = new FileWriter(outputFolder + "\\" + fileName + ".txt");
                 writer.write(res);
                 writer.close();
             }
-            System.out.println(" done.");
+            System.err.println(" done.");
         }
 
         // Main Folder: J:\processed\jellyfish_n128_with_servers\d8
@@ -156,7 +156,7 @@ public class ProcessAll {
         ////////////////////
         // JELLYFISH N206 10 SEEDS
 
-        System.out.println("Jellyfish N206 D11...");
+        System.err.println("Jellyfish N206 D11...");
 
         String[] jellyfishRoutingsN206 = new String[] {
                 "ecmp_uniform",
@@ -169,13 +169,13 @@ public class ProcessAll {
         String mainFolder = "jellyfish_n206_d11";
         String prefix = "jellyfish_n206_d11_seed_";
         for (String routing : jellyfishRoutingsN206) {
-            System.out.print(routing + "...");
+            System.err.print(routing + "...");
             String fileName = mainFolder.replace("\\", "_") + "_" + routing;
             String res = CalculateAverageStatistics.process(base + mainFolder, prefix, routing);
             FileWriter writer = new FileWriter(outputFolder + "\\" + fileName + ".txt");
             writer.write(res);
             writer.close();
-            System.out.println(" done.");
+            System.err.println(" done.");
         }
 
     }

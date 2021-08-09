@@ -8,8 +8,8 @@ public class InFolderCombinator {
     private static final boolean FOR_THESIS  = false;
 
     public static void main(String[] args) throws IOException {
-        //System.out.println(process("J:\\thesisrunmonday\\alizadeh"));
-        System.out.println(process("J:\\thesisrunmonday\\pareto\\100KB_shape_1.05"));
+        //System.err.println(process("J:\\thesisrunmonday\\alizadeh"));
+        System.err.println(process("J:\\thesisrunmonday\\pareto\\100KB_shape_1.05"));
     }
     public static String process(String main_folder) throws IOException {
 

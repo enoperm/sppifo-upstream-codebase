@@ -33,7 +33,7 @@ public class NormalizeIt {
                     flowsToNorm.put(flows, value);
                 }
             }
-            System.out.println(spl[0] + "\t" + flows + "\t" + (value / flowsToNorm.get(flows)));
+            System.err.println(spl[0] + "\t" + flows + "\t" + (value / flowsToNorm.get(flows)));
 
 
         }

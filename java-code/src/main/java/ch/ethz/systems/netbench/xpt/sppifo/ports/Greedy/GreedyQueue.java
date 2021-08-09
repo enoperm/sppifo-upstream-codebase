@@ -195,11 +195,11 @@ public class GreedyQueue implements Queue {
                 if ((currentQueueBound <= rank) || q==0) {
                     boolean result = queueList.get(q).offer(o);
                     if (!result){
-                        // System.out.println("Greedy: Packet with rank " + rank + " has been dropped from queue " + q + ".");
+                        // System.err.println("Greedy: Packet with rank " + rank + " has been dropped from queue " + q + ".");
                         returnValue = false;
                         break;
                     } else {
-                        // System.out.println("Greedy: Packet with rank " + rank + " enqueued in queue " + q + ".");
+                        // System.err.println("Greedy: Packet with rank " + rank + " enqueued in queue " + q + ".");
                         returnValue = true;
                         break;
                     }
@@ -207,10 +207,10 @@ public class GreedyQueue implements Queue {
             }
 
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         } finally {
             this.reentrantLock.unlock();
-            // System.out.println("Packet with rank " + rank + "enqueued_flag" + returnValue);
+            // System.err.println("Packet with rank " + rank + "enqueued_flag" + returnValue);
             return returnValue;
         }
     }
@@ -305,7 +305,7 @@ public class GreedyQueue implements Queue {
                 if (p != null){
                     PriorityHeader header = (PriorityHeader) p;
                     // int rank = (int)header.getPriority();
-                    // System.out.println("Greedy: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
+                    // System.err.println("Greedy: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
                     return p;
                 }
             }

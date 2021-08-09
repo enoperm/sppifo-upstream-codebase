@@ -64,10 +64,10 @@ public class SkewedTrafficPairProbabilitiesCreator {
                 top10percTotalProb += nodeProb.get(i);
             }
         }
-        System.out.println("The top 1% nodes hold " + (100 * top1percTotalProb) + "% of all node probability.");
-        System.out.println("The top 5% nodes hold " + (100 * top5percTotalProb) + "% of all node probability.");
-        System.out.println("The top 10% nodes hold " + (100 * top10percTotalProb) + "% of all node probability.");
-        System.out.println("Maximum node probability: " + nodeProb.get(0));
+        System.err.println("The top 1% nodes hold " + (100 * top1percTotalProb) + "% of all node probability.");
+        System.err.println("The top 5% nodes hold " + (100 * top5percTotalProb) + "% of all node probability.");
+        System.err.println("The top 10% nodes hold " + (100 * top10percTotalProb) + "% of all node probability.");
+        System.err.println("Maximum node probability: " + nodeProb.get(0));
 
         // Shuffle probability list such that there is no guarantee which node
         // will become the most probable (as mass is drawn from exponential distribution left-to-right)
@@ -95,7 +95,7 @@ public class SkewedTrafficPairProbabilitiesCreator {
             max = Math.max(max, val);
             nodePairProb.set(i, val);
         }
-        System.out.println("Maximum node pair probability: " + max);
+        System.err.println("Maximum node pair probability: " + max);
 
         // Write away node probabilities
         BufferedWriter nodeOutWriter = new BufferedWriter(new FileWriter(outNodePairsFileName));
@@ -152,7 +152,7 @@ public class SkewedTrafficPairProbabilitiesCreator {
 
         }
 
-        System.out.println("Total server pair probability: " + totalProb);
+        System.err.println("Total server pair probability: " + totalProb);
 
         // Close file streams
         outWriter.close();

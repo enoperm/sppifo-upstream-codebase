@@ -180,7 +180,7 @@ public class SingularCombinatorParetoGraph {
         for (File f : directoryFiles) {
             String dir = f.getAbsolutePath();
             File file = new File(dir + "/plots/general_statistics.info");
-            System.out.println(dir);
+            System.err.println(dir);
             HashMap<String, Double> values = new HashMap<>();
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line = reader.readLine();

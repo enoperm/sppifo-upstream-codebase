@@ -44,7 +44,7 @@ public class CalculateAverageStatistics {
                     String key = spl[0].replace("\"", "");
                     Double current = values.get(key);
                     //if (key.equals("fct_all_mean")) {
-                    //    System.out.println(Double.valueOf(spl[1]));
+                    //    System.err.println(Double.valueOf(spl[1]));
                     //}
                     if (current == null) {
                         values.put(key, Double.valueOf(spl[1]));

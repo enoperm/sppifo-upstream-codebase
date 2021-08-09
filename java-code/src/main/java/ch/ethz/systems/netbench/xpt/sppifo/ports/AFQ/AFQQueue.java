@@ -73,8 +73,8 @@ public class AFQQueue implements Queue {
             }
         } catch (Exception e){
             e.printStackTrace();
-            System.out.println("Probably the bid size has been exceeded, transmit less packets ");
-            System.out.println("Exception AFQ offer: " + e.getMessage() + e.getLocalizedMessage());
+            System.err.println("Probably the bid size has been exceeded, transmit less packets ");
+            System.err.println("Exception AFQ offer: " + e.getMessage() + e.getLocalizedMessage());
         } finally {
             this.reentrantLock.unlock();
             return result;

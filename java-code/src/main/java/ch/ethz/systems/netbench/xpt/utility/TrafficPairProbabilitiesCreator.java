@@ -51,7 +51,7 @@ public class TrafficPairProbabilitiesCreator {
 		for(Pair<Integer,Integer> p : values){
 			int n = p.getLeft();
 			int nParticipating = p.getRight();
-			System.out.println("Generating results for: " + n);
+			System.err.println("Generating results for: " + n);
 			generate(allUntilExclusive(nParticipating), "scenarios/all_to_all/all_to_all_n="+Integer.toString(n)+".txt");
 		}
     }

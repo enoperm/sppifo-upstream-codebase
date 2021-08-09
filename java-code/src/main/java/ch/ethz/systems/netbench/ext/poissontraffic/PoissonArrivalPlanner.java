@@ -104,7 +104,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
      */
     private void setPairProbabilitiesParetoSkew() {
 
-        System.out.print("Generating pareto-skewed pair probabilities between all ToRs...");
+        System.err.print("Generating pareto-skewed pair probabilities between all ToRs...");
 
         // Get the random generator for this part
         Random gen = Simulator.selectIndependentRandom("skew_pareto_distribution");
@@ -160,10 +160,10 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
             }
         }
 
-        System.out.println(" done.");
-        System.out.println("Top 20 ToR probabilities:");
+        System.err.println(" done.");
+        System.err.println("Top 20 ToR probabilities:");
         for (int i = tors.size() - 1; i >= Math.max(0, tors.size() - 20); i--) {
-            System.out.println("ToR #" + tors.get(i) + " has probability " + probRes.get(i));
+            System.err.println("ToR #" + tors.get(i) + " has probability " + probRes.get(i));
         }
 
     }
@@ -173,7 +173,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
      */
     private void setPairProbabilitiesAllToAll() {
 
-        System.out.print("Generating all-to-all pair probabilities between all nodes with a transport layer...");
+        System.err.print("Generating all-to-all pair probabilities between all nodes with a transport layer...");
 
         // Uniform probability for every server pair
         double pdfNumBytes = 1.0 / (this.idToTransportLayerMap.size() * (this.idToTransportLayerMap.size() - 1));
@@ -187,7 +187,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
             }
         }
 
-        System.out.println(" done.");
+        System.err.println(" done.");
 
     }
 
@@ -231,7 +231,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
         Collections.sort(chosen);
         SimulationLogger.logInfo("A2A_FRACTION_CHOSEN_SERVERS", chosen.toString());
 
-        System.out.println(" done.");
+        System.err.println(" done.");
 
     }
 
@@ -260,7 +260,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
         // Probability between each server pair
         double serverPairProb = 1.0 / (numChosenTors * (numChosenTors - 1) * serversPerNodeToExtendWith * serversPerNodeToExtendWith);
 
-        System.out.print("Generating all-to-all pair probabilities in " + (activeFractionX * 100) + "% fraction " + tors.size() + " ToRs between their servers...");
+        System.err.print("Generating all-to-all pair probabilities in " + (activeFractionX * 100) + "% fraction " + tors.size() + " ToRs between their servers...");
 
         // Go over every ToR pair
         List<Integer> chosen = new ArrayList<>();
@@ -288,7 +288,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
         Collections.sort(chosen);
         SimulationLogger.logInfo("A2A_FRACTION_CHOSEN_TORS", chosen.toString());
 
-        System.out.println(" done.");
+        System.err.println(" done.");
 
     }
 
@@ -329,9 +329,9 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
 
         SimulationLogger.logInfo("DUAL_FRACTION_A", "Portion A: (n=" + numChosenTorsA + ", p=" + probabilityPerA + ", tot=" + probabilityMassA + ")");
         SimulationLogger.logInfo("DUAL_FRACTION_B", "Portion B: (n=" + numChosenTorsB + ", p=" + probabilityPerB + ", tot=" + (1-probabilityMassA) + ")");
-        System.out.println("Portion A: (n=" + numChosenTorsA + ", p=" + probabilityPerA + ", tot=" + probabilityMassA + ")");
-        System.out.println("Portion B: (n=" + numChosenTorsB + ", p=" + probabilityPerB + ", tot=" + (1-probabilityMassA) + ")");
-        System.out.print("Generating all-to-all dual fraction probabilities... ");
+        System.err.println("Portion A: (n=" + numChosenTorsA + ", p=" + probabilityPerA + ", tot=" + probabilityMassA + ")");
+        System.err.println("Portion B: (n=" + numChosenTorsB + ", p=" + probabilityPerB + ", tot=" + (1-probabilityMassA) + ")");
+        System.err.print("Generating all-to-all dual fraction probabilities... ");
 
         // Go over every ToR pair
         for (int i = 0; i < tors.size(); i++) {
@@ -357,7 +357,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
             }
         }
 
-        System.out.println(" done.");
+        System.err.println(" done.");
 
     }
 
@@ -398,9 +398,9 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
 
         SimulationLogger.logInfo("SERVER_DUAL_FRACTION_A", "Portion A: (n=" + numChosenTorsA + ", p=" + probabilityPerA + ", tot=" + probabilityMassA + ")");
         SimulationLogger.logInfo("SERVER_DUAL_FRACTION_B", "Portion B: (n=" + numChosenTorsB + ", p=" + probabilityPerB + ", tot=" + (1-probabilityMassA) + ")");
-        System.out.println("Portion A: (n=" + numChosenTorsA + ", p=" + probabilityPerA + ", tot=" + probabilityMassA + ")");
-        System.out.println("Portion B: (n=" + numChosenTorsB + ", p=" + probabilityPerB + ", tot=" + (1-probabilityMassA) + ")");
-        System.out.print("Generating all-to-all dual fraction probabilities... ");
+        System.err.println("Portion A: (n=" + numChosenTorsA + ", p=" + probabilityPerA + ", tot=" + probabilityMassA + ")");
+        System.err.println("Portion B: (n=" + numChosenTorsB + ", p=" + probabilityPerB + ", tot=" + (1-probabilityMassA) + ")");
+        System.err.print("Generating all-to-all dual fraction probabilities... ");
 
         // Go over every ToR pair
         for (int i = 0; i < tors.size(); i++) {
@@ -416,7 +416,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
             }
         }
 
-        System.out.println(" done.");
+        System.err.println(" done.");
 
     }
 
@@ -445,7 +445,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
         // Probability between each server pair
         double serverPairProb = 1.0 / (Math.floor((double) numChosenTors / 2) * serversPerNodeToExtendWith * serversPerNodeToExtendWith * 2);
 
-        System.out.print("Generating pairings pair probabilities in " + (activeFractionX * 100) + "% fraction " + tors.size() + " ToRs between their servers...");
+        System.err.print("Generating pairings pair probabilities in " + (activeFractionX * 100) + "% fraction " + tors.size() + " ToRs between their servers...");
 
         List<Integer> remaining = new ArrayList<>();
         for (int i = 0; i < numChosenTors; i++) {
@@ -491,7 +491,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
         SimulationLogger.logInfo("PAIRING_NUM_CHOSEN_TORS", String.valueOf(numChosenTors));
         SimulationLogger.logInfo("PAIRINGS_FRACTION_CHOSEN_TORS", chosen.toString());
 
-        System.out.println(" done.");
+        System.err.println(" done.");
 
     }
     
@@ -508,7 +508,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
 
         try {
 
-            System.out.print("Reading in communication pair probabilities...");
+            System.err.print("Reading in communication pair probabilities...");
 
             // Open file stream
             FileReader input = new FileReader(fileName);
@@ -556,7 +556,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
             // Close file stream
             br.close();
 
-            System.out.println(" done.");
+            System.err.println(" done.");
 
         } catch (IOException e) {
             throw new RuntimeException("Graph: failed to read file: " + e.getMessage());
@@ -567,7 +567,7 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
     @Override
     public void createPlan(long durationNs) {
 
-        System.out.print("Creating arrival plan...");
+        System.err.print("Creating arrival plan...");
 
         // Statistics tracking
         long time = 0;
@@ -606,18 +606,18 @@ public class PoissonArrivalPlanner extends TrafficPlanner {
             x++;
 
             if (time > nextProgressLog) {
-                System.out.print(" " + (100 * time / durationNs) + "%...");
+                System.err.print(" " + (100 * time / durationNs) + "%...");
                 nextProgressLog += durationNs / 10;
             }
 
         }
 
-        System.out.println(" done.");
+        System.err.println(" done.");
 
         // Log plan created
-        System.out.println("Poisson Arrival plan created.");
-        System.out.println("Number of flows created: " + x + ".");
-        System.out.println("Mean inter-arrival time: " + (sum / x) + " (expectation: "
+        System.err.println("Poisson Arrival plan created.");
+        System.err.println("Number of flows created: " + x + ".");
+        System.err.println("Mean inter-arrival time: " + (sum / x) + " (expectation: "
                 + (1 / (lambdaFlowStartsPerSecond / 1e9)) + ")");
         SimulationLogger.logInfo("Flow planner number flows", String.valueOf(x));
         SimulationLogger.logInfo("Flow planner mean inter-arrival time", String.valueOf((sum / x)));

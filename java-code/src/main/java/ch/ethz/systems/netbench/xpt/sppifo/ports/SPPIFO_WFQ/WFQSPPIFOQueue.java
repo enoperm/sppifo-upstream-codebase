@@ -80,16 +80,16 @@ public class WFQSPPIFOQueue implements Queue {
                 if ((currentQueueBound <= rank) || q==0) {
                     boolean result = queueList.get(q).offer(o);
                     if (!result){
-                        // System.out.println("SPPIFO: Packet with rank " + rank + " has been dropped from queue " + q + ".");
+                        // System.err.println("SPPIFO: Packet with rank " + rank + " has been dropped from queue " + q + ".");
                         returnValue = false;
                         break;
                     } else {
                         // Try to set finish time only for packets enqueued
-                        // System.out.println("SPPIFO: Packet with rank " + rank + " enqueued in queue " + q + ".");
+                        // System.err.println("SPPIFO: Packet with rank " + rank + " enqueued in queue " + q + ".");
                         queueBounds.put(q, rank);
                         int cost = currentQueueBound - rank;
                         if (cost > 0){
-                            // System.out.println("SPPIFO: Blocking occurred with cost = " + cost + ". Reacting to blocking...");
+                            // System.err.println("SPPIFO: Blocking occurred with cost = " + cost + ". Reacting to blocking...");
                             for (int w=queueList.size()-1; w>q; w--){
                                 currentQueueBound = (int) queueBounds.get(w);
                                 queueBounds.put(w, currentQueueBound-cost); // Update queue bounds
@@ -101,7 +101,7 @@ public class WFQSPPIFOQueue implements Queue {
                 }
             }
         } catch (Exception e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         } finally {
             this.reentrantLock.unlock();
             return returnValue;

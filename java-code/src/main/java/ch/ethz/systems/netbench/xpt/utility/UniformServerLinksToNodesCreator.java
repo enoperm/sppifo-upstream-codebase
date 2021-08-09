@@ -52,7 +52,7 @@ public class UniformServerLinksToNodesCreator {
         writer.close();
 
         // End message
-        System.out.println("Uniform server links are generated; output in file " + fileName);
+        System.err.println("Uniform server links are generated; output in file " + fileName);
 
     }
 

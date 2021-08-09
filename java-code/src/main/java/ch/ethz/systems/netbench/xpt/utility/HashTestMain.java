@@ -19,7 +19,7 @@ public class HashTestMain {
         }
 
         for (int c = 0; c < 5; c++) {
-            System.out.println(c + ": " + counters.get(c));
+            System.err.println(c + ": " + counters.get(c));
         }
     }
 

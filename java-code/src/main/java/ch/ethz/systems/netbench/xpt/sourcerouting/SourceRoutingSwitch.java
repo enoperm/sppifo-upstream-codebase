@@ -172,10 +172,10 @@ public class SourceRoutingSwitch extends NetworkDevice {
         List<SourceRoutingPath> current = this.destinationToPaths.get(destinationId);
         if (current.contains(path)) {
             if (Simulator.getConfiguration().getBooleanPropertyWithDefault("allow_source_routing_skip_duplicate_paths", false)) {
-                System.out.println("For (" + this.getIdentifier() + "->" + destinationId + ") skipped duplicate path : " + path);
+                System.err.println("For (" + this.getIdentifier() + "->" + destinationId + ") skipped duplicate path : " + path);
                 return;
             } else if (Simulator.getConfiguration().getBooleanPropertyWithDefault("allow_source_routing_add_duplicate_paths", false)) {
-                System.out.println("For (" + this.getIdentifier() + "->" + destinationId + ") added duplicate path : " + path);
+                System.err.println("For (" + this.getIdentifier() + "->" + destinationId + ") added duplicate path : " + path);
             } else {
                 throw new IllegalArgumentException("Cannot add a duplicate path (" + path + ")");
             }

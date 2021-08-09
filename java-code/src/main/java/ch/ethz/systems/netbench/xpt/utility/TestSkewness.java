@@ -15,8 +15,8 @@ public class TestSkewness {
 
     public static void main(String args[]) {
 
-        System.out.println("Uniform value: " + 1.0/216.0);
-        System.out.print("Generating pareto-skewed pair probabilities between all nodes with a transport layer...");
+        System.err.println("Uniform value: " + 1.0/216.0);
+        System.err.print("Generating pareto-skewed pair probabilities between all nodes with a transport layer...");
         double[] shapes = new double[]{0.01, 0.1, 0.15, 0.2, 0.5, 0.8, 1, 1.01, 1.03, 1.05, 1.5, 3, 5, 10, 20, 40, 100};
 
         for (double shape : shapes) {
@@ -76,7 +76,7 @@ public class TestSkewness {
                         double serverProb = torPairProb / (srcServers.size() * dstServers.size());
                         for (int src : srcServers) {
                             for (int dst : dstServers) {
-                                //System.out.println(serverProb + "" + new ImmutablePair<>(src, dst));
+                                //System.err.println(serverProb + "" + new ImmutablePair<>(src, dst));
                                 counter += serverProb;
                             }
                         }
@@ -84,16 +84,16 @@ public class TestSkewness {
                     }
                 }
             }
-            //System.out.println(counter);
-            //System.out.println(c2);
-            //System.out.println(" done.");
-            System.out.println(shape + "\n=======");
-            System.out.println("Top 20 ToRs:");
+            //System.err.println(counter);
+            //System.err.println(c2);
+            //System.err.println(" done.");
+            System.err.println(shape + "\n=======");
+            System.err.println("Top 20 ToRs:");
             for (int i = tors.size() - 1; i >= Math.max(0, tors.size() - 20); i--) {
-                System.out.println("ToR #" + tors.get(i) + " has probability " + probRes.get(i));
+                System.err.println("ToR #" + tors.get(i) + " has probability " + probRes.get(i));
             }
-           // System.out.println();
-            System.out.println(shape + "\t" + probRes.get(tors.size() - 1));
+           // System.err.println();
+            System.err.println(shape + "\t" + probRes.get(tors.size() - 1));
 
         }
 

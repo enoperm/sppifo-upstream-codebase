@@ -22,7 +22,7 @@ public class EcmpRoutingUtility {
      */
     private static int[][] calculateShortestPaths(Graph graph) {
 
-        System.out.print("Calculating shortest path lengths...");
+        System.err.print("Calculating shortest path lengths...");
 
         int numNodes = graph.getVertexList().size();
         int[][] shortestPathLen = new int[numNodes][numNodes];
@@ -51,7 +51,7 @@ public class EcmpRoutingUtility {
             }
         }
 
-        System.out.println(" done.");
+        System.err.println(" done.");
 
         return shortestPathLen;
 
@@ -73,7 +73,7 @@ public class EcmpRoutingUtility {
         // Calculate shortest path length
         int[][] shortestPathLen = EcmpRoutingUtility.calculateShortestPaths(graph);
 
-        System.out.print("Populating ECMP forward routing tables...");
+        System.err.print("Populating ECMP forward routing tables...");
 
         // Go over every network device pair and set the forwarder switch routing table
         for (int i = 0; i < numNodes; i++) {
@@ -106,12 +106,12 @@ public class EcmpRoutingUtility {
 
             // Log progress...
             if (numNodes > 10 && (i + 1) % ((numNodes / 10)) == 0) {
-                System.out.print(" " + (((double) i + 1) / (numNodes) * 100) + "%...");
+                System.err.print(" " + (((double) i + 1) / (numNodes) * 100) + "%...");
             }
 
         }
 
-        System.out.println(" done.");
+        System.err.println(" done.");
 
     }
 

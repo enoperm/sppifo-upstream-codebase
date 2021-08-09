@@ -139,7 +139,7 @@ public class SPPCNodePairsFromFile {
 
         }
 
-        System.out.println("Total server pair probability: " + totalProb);
+        System.err.println("Total server pair probability: " + totalProb);
 
         // Close file streams
         outWriter.close();

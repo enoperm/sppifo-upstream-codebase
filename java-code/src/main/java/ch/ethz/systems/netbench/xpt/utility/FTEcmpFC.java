@@ -4,7 +4,7 @@ public class FTEcmpFC {
 
     public static void main(String args[]) {
 
-        System.out.println("#server_pair_id,src,dst,pdf_num_bytes");
+        System.err.println("#server_pair_id,src,dst,pdf_num_bytes");
         int c = 0;
         for (int i = 320; i < 333; i++) {
             if (i > 324 && i < 328) {
@@ -17,7 +17,7 @@ public class FTEcmpFC {
                 if (i == j) {
                     continue;
                 }
-                System.out.println(c + "," + i + "," + j + "," + (1.0/90.0));
+                System.err.println(c + "," + i + "," + j + "," + (1.0/90.0));
                 c++;
             }
         }

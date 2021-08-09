@@ -25,17 +25,17 @@ public class FileLineComparator {
                 String lineB = br2.readLine();
 
                 if (lineA == null && lineB == null) {
-                    System.out.println("Line comparator found no difference between the two files.");
+                    System.err.println("Line comparator found no difference between the two files.");
                     break;
                 }
 
                 if (lineA == null || lineB == null) {
-                    System.out.println("[" + i + "]: " + lineA + " vs. " + lineB);
+                    System.err.println("[" + i + "]: " + lineA + " vs. " + lineB);
                     break;
                 }
 
                 if (!lineA.equals(lineB)) {
-                    System.out.println("[" + i + "]: " + lineA + " vs. " + lineB);
+                    System.err.println("[" + i + "]: " + lineA + " vs. " + lineB);
                     break;
                 }
                 i++;

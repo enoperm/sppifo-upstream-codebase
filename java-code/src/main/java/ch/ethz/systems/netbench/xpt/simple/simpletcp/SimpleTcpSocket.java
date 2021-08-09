@@ -196,7 +196,7 @@ public class SimpleTcpSocket extends Socket {
                 false  // ECE
         ));
 
-        // System.out.println("3-WAY HANDSHAKE: 0. Sender sent SYN.");
+        // System.err.println("3-WAY HANDSHAKE: 0. Sender sent SYN.");
 
         // Preserve space as this field will never be used
         this.selectiveAckSet = null;
@@ -258,7 +258,7 @@ public class SimpleTcpSocket extends Socket {
                             false // ECE
                     ));
 
-                    // System.out.println("3-WAY HANDSHAKE: 1. Receiver received SYN, sent back ACK+SYN.");
+                    // System.err.println("3-WAY HANDSHAKE: 1. Receiver received SYN, sent back ACK+SYN.");
 
                 }
 
@@ -310,7 +310,7 @@ public class SimpleTcpSocket extends Socket {
                     // Start sending
                     sendPendingData();
 
-                    // System.out.println("3-WAY HANDSHAKE: 2. Sender received ACK+SYN, sent back ACK.");
+                    // System.err.println("3-WAY HANDSHAKE: 2. Sender received ACK+SYN, sent back ACK.");
 
                 }
 
@@ -351,7 +351,7 @@ public class SimpleTcpSocket extends Socket {
                     this.acknowledgedSegStartSeqNumbers = null;
                     this.sentOutUnacknowledgedSegStartSeqNumbers = null;
 
-                    // System.out.println("3-WAY HANDSHAKE: 3. Receiver received ACK.");
+                    // System.err.println("3-WAY HANDSHAKE: 3. Receiver received ACK.");
 
                 }
 
@@ -654,7 +654,7 @@ public class SimpleTcpSocket extends Socket {
 
     /*private void printf(String s) {
         if (flowId == 0) {
-            System.out.println(s);
+            System.err.println(s);
         }
     }*/
 

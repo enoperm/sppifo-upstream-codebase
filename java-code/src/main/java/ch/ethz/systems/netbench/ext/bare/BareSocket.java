@@ -153,7 +153,7 @@ public class BareSocket extends Socket {
 
     private void print(String s) {
         if (flowId == 2) {
-            System.out.println(s);
+            System.err.println(s);
         }
     }
 

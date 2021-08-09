@@ -5,7 +5,7 @@ import ch.ethz.systems.netbench.ext.basic.TcpPacket;
 
 import java.util.Collection;
 
-public class FullExtTcpPacket extends TcpPacket implements SelectiveAckHeader, EchoHeader, PriorityHeader, Comparable {
+public class FullExtTcpPacket extends TcpPacket implements SelectiveAckHeader, EchoHeader, PriorityHeader, Comparable<PriorityHeader> {
 
     private long priority;
     private Collection<AckRange> selectiveAck;
@@ -68,7 +68,7 @@ public class FullExtTcpPacket extends TcpPacket implements SelectiveAckHeader, E
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(PriorityHeader o) {
         PriorityHeader header = (PriorityHeader) o;
         PriorityHeader header2 = (PriorityHeader) this;
         return Long.compare((int)header2.getPriority(), (int)header.getPriority());

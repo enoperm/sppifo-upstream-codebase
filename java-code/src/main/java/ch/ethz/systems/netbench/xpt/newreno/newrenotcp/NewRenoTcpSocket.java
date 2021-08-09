@@ -267,7 +267,7 @@ public class NewRenoTcpSocket extends Socket {
                 false  // ECE
         ));
 
-        // System.out.println("3-WAY HANDSHAKE: 0. Sender sent SYN.");
+        // System.err.println("3-WAY HANDSHAKE: 0. Sender sent SYN.");
 
     }
 
@@ -319,7 +319,7 @@ public class NewRenoTcpSocket extends Socket {
                             false // ECE
                     ));
 
-                    // System.out.println("3-WAY HANDSHAKE: 1. Receiver received SYN, sent back ACK+SYN.");
+                    // System.err.println("3-WAY HANDSHAKE: 1. Receiver received SYN, sent back ACK+SYN.");
 
                 }
 
@@ -371,7 +371,7 @@ public class NewRenoTcpSocket extends Socket {
                     // Start sending
                     fillWindow();
 
-                    // System.out.println("3-WAY HANDSHAKE: 2. Sender received ACK+SYN, sent back ACK.");
+                    // System.err.println("3-WAY HANDSHAKE: 2. Sender received ACK+SYN, sent back ACK.");
 
                 }
 
@@ -407,7 +407,7 @@ public class NewRenoTcpSocket extends Socket {
                     // Connection is now established
                     currentState = ESTABLISHED;
 
-                    // System.out.println("3-WAY HANDSHAKE: 3. Receiver received ACK.");
+                    // System.err.println("3-WAY HANDSHAKE: 3. Receiver received ACK.");
 
                 }
 
@@ -700,7 +700,7 @@ public class NewRenoTcpSocket extends Socket {
 
     private void printf(String s) {
         if (flowId == 4) {
-            System.out.println(s);
+            System.err.println(s);
         }
     }
 

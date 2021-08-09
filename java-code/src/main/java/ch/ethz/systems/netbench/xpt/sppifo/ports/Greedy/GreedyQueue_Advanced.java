@@ -124,7 +124,7 @@ public class GreedyQueue_Advanced implements Queue {
             }
 
         } else {
-            System.out.println("Greedy Warning: Initialization strategy not supported.");
+            System.err.println("Greedy Warning: Initialization strategy not supported.");
         }
 
         for (int q=0; q<queueList.size(); q++){
@@ -176,7 +176,7 @@ public class GreedyQueue_Advanced implements Queue {
                     boolean result = queueList.get(q).offer(o);
 
                     if (!result){
-                        // System.out.println("Greedy: Packet with rank " + rank + " has been dropped from queue " + q + ".");
+                        // System.err.println("Greedy: Packet with rank " + rank + " has been dropped from queue " + q + ".");
                         returnValue = false;
                         break;
                     } else {
@@ -375,11 +375,11 @@ public class GreedyQueue_Advanced implements Queue {
             }
 
         } catch (Exception e){
-            System.out.println("Exception: " + e.getMessage());
+            System.err.println("Exception: " + e.getMessage());
             e.printStackTrace();
         } finally {
             this.reentrantLock.unlock();
-            // System.out.println("Packet with rank " + rank + "enqueued_flag" + returnValue);
+            // System.err.println("Packet with rank " + rank + "enqueued_flag" + returnValue);
             return returnValue;
         }
     }
@@ -474,7 +474,7 @@ public class GreedyQueue_Advanced implements Queue {
                 if (p != null){
                     PriorityHeader header = (PriorityHeader) p;
                     int rank = (int)header.getPriority();
-                    // System.out.println("SPPIFO: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
+                    // System.err.println("SPPIFO: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
 
                     // Log rank of packet enqueued and queue selected if enabled
                     if(SimulationLogger.hasRankMappingEnabled()){
@@ -497,7 +497,7 @@ public class GreedyQueue_Advanced implements Queue {
 
                         if (rankSmallest < rank) {
                             SimulationLogger.logInversionsPerRank(this.ownId, rank, 1);
-                            // System.out.println("Rank " + rank + " is blocking the transmission to " + rankSmallest);
+                            // System.err.println("Rank " + rank + " is blocking the transmission to " + rankSmallest);
                         }
                     }
                     return p;

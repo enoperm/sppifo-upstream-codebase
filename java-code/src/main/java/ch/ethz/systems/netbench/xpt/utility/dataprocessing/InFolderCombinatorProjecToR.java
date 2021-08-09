@@ -8,7 +8,7 @@ public class InFolderCombinatorProjecToR {
     private static final boolean FOR_THESIS  = false;
 
     public static void main(String[] args) throws IOException {
-        System.out.println(process("J:\\thesisrunmonday\\projector"));
+        System.err.println(process("J:\\thesisrunmonday\\projector"));
     }
     public static String process(String main_folder) throws IOException {
 

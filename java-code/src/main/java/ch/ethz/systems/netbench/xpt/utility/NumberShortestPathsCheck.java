@@ -68,8 +68,8 @@ public class NumberShortestPathsCheck {
 
                     }
 
-                    System.out.println(paths.size());
-                    System.out.println(paths);
+                    System.err.println(paths.size());
+                    System.err.println(paths);
 
                     List<List<Pair<Integer, Integer>>> nonConflictingPaths  = new ArrayList<>();
                     for (List<Pair<Integer, Integer>> p1 : paths) {
@@ -88,14 +88,14 @@ public class NumberShortestPathsCheck {
                         }
                     }
 
-                    //System.out.println(i + " - > " + j + " has " + found + "  paths.");
+                    //System.err.println(i + " - > " + j + " has " + found + "  paths.");
                     outputWriter.write(i + "\t" + j + "\t" + paths.size() + "\t" + shortestPathLength + "\t" + nonConflictingPaths.size() + "\n");
 
 
 
                     // Create warning message if not enough different paths could be found
                     //if (found != k) {
-                    //    System.out.println("WARNING: could only find " + found + " paths for " + i + " -> " + j + ", which is less than k=" + k + ".");
+                    //    System.err.println("WARNING: could only find " + found + " paths for " + i + " -> " + j + ", which is less than k=" + k + ".");
                     //}
 
                 }
@@ -103,7 +103,7 @@ public class NumberShortestPathsCheck {
 
             // Log progress...
             //if (numNodes > 10 && ((i + 1) % Math.ceil((numNodes / 100.0))) == 0) {
-            //    System.out.print(" " + (((double) i + 1) / (numNodes) * 100) + "%...");
+            //    System.err.print(" " + (((double) i + 1) / (numNodes) * 100) + "%...");
             //}
 
         //}

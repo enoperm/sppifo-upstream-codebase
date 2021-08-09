@@ -70,7 +70,7 @@ public class EcmpThenKspNoShortestRouting extends RoutingPopulator {
 
         try {
 
-            System.out.print("Determining KSP-" + k + " routing state (cache present, so reading from file " + getKspnsCacheFilename(details) + ")...");
+            System.err.print("Determining KSP-" + k + " routing state (cache present, so reading from file " + getKspnsCacheFilename(details) + ")...");
 
             // Open file stream
             FileReader input = new FileReader(getKspnsCacheFilename(details));
@@ -111,7 +111,7 @@ public class EcmpThenKspNoShortestRouting extends RoutingPopulator {
             // Close stream
             br.close();
 
-            System.out.println(" done.");
+            System.err.println(" done.");
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -132,7 +132,7 @@ public class EcmpThenKspNoShortestRouting extends RoutingPopulator {
         // Retrieve ToR nodes
         Set<Integer> torNodes = details.getTorNodeIds();
 
-        System.out.print("Determining KSP-" + k + " routing state (no cache present; writing cache to " + getKspnsCacheFilename(details) + ")...");
+        System.err.print("Determining KSP-" + k + " routing state (no cache present; writing cache to " + getKspnsCacheFilename(details) + ")...");
 
         try {
 
@@ -195,7 +195,7 @@ public class EcmpThenKspNoShortestRouting extends RoutingPopulator {
 
                         // Create warning message if not enough different paths could be found
                         if (found != k) {
-                            System.out.println("WARNING: could only find " + found + " paths for " + i + " -> " + j + ", which is less than k=" + k + ".");
+                            System.err.println("WARNING: could only find " + found + " paths for " + i + " -> " + j + ", which is less than k=" + k + ".");
                         }
 
                     }
@@ -204,12 +204,12 @@ public class EcmpThenKspNoShortestRouting extends RoutingPopulator {
 
                 // Log progress...
                 if (torNodes.size() > 10 && ((i + 1) % Math.ceil((torNodes.size() / 100.0))) == 0) {
-                    System.out.print(" " + (((double) i + 1) / (torNodes.size()) * 100) + "%...");
+                    System.err.print(" " + (((double) i + 1) / (torNodes.size()) * 100) + "%...");
                 }
 
             }
 
-            System.out.println(" done.");
+            System.err.println(" done.");
 
             pathsFile.close();
 

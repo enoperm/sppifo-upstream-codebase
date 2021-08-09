@@ -34,7 +34,7 @@ public class ExcelCombinator {
             br.close();
         }
 
-        System.out.println(result);
+        System.err.println(result);
 
     }
 

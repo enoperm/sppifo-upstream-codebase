@@ -11,9 +11,9 @@ public class NodeTransportLayerMapper {
         int n = 100;
         for (int i = 0; i < n; i++) {
             if (matchCriteria(i)) {
-                System.out.println(i + " 1");
+                System.err.println(i + " 1");
             } else {
-                System.out.println(i + " 0");
+                System.err.println(i + " 0");
             }
         }
 

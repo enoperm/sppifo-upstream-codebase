@@ -35,11 +35,11 @@ public class TwoSequenceHashTest {
                 same++;
             }
         }
-        System.out.println("Sequences overlap for " + (((double) same) / sequenceLength * 100) + "% which should be close to the expected " + (1.0 / outcomes * 100) + "%");
+        System.err.println("Sequences overlap for " + (((double) same) / sequenceLength * 100) + "% which should be close to the expected " + (1.0 / outcomes * 100) + "%");
 
-        System.out.println("Sum of outcomes for both sequences: ");
+        System.err.println("Sum of outcomes for both sequences: ");
         for (int c = 0; c < outcomes; c++) {
-            System.out.println(c + ": " + counters.get(c));
+            System.err.println(c + ": " + counters.get(c));
         }
 
     }

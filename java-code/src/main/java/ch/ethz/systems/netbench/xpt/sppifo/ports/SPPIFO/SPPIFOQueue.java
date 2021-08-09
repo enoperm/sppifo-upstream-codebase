@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SPPIFOQueue implements Queue {
 
     private final ArrayList<ArrayBlockingQueue> queueList;
-    private final Map queueBounds;
+    private final Map<Integer, Integer> queueBounds;
     private ReentrantLock reentrantLock;
     private int ownId;
     private String stepSize;
@@ -22,10 +22,10 @@ public class SPPIFOQueue implements Queue {
     public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, String stepSize){
         this.queueList = new ArrayList((int)numQueues);
         this.reentrantLock = new ReentrantLock();
-        this.queueBounds = new HashMap();
+        this.queueBounds = new HashMap<Integer, Integer>();
 
         ArrayBlockingQueue fifo;
-        for (int i=0; i<(int)numQueues; i++){
+        for (int i = 0; i < numQueues; i++){
             fifo = new ArrayBlockingQueue<Packet>((int)perQueueCapacity);
             queueList.add(fifo);
             queueBounds.put(i, 0);
@@ -75,7 +75,7 @@ public class SPPIFOQueue implements Queue {
                                 } else if (this.stepSize.equals("queueBound")){
                                     queueBounds.put(w, queueBounds.get(w-1));
                                 } else {
-                                    System.out.println("ERROR: SP-PIFO step size not supported.");
+                                    System.err.println("ERROR: SP-PIFO step size not supported.");
                                 }
                             }
                         }
@@ -183,7 +183,7 @@ public class SPPIFOQueue implements Queue {
 
                     PriorityHeader header = (PriorityHeader) p;
                     int rank = (int)header.getPriority();
-                    // System.out.println("SPPIFO: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
+                    // System.err.println("SPPIFO: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
 
                     // Log rank of packet enqueued and queue selected if enabled
                     if(SimulationLogger.hasRankMappingEnabled()){
@@ -192,6 +192,9 @@ public class SPPIFOQueue implements Queue {
 
                     if(SimulationLogger.hasQueueBoundTrackingEnabled()){
                         for (int c=queueList.size()-1; c>=0; c--){
+                            // FIXME: This is NOT the bound of he cth queue.
+                            // This is the LEGNTH of that queue.
+                            // Actual bounds are stored in the queueBounds map.
                             SimulationLogger.logQueueBound(this.ownId, c, queueList.get(c).size());
                         }
                     }

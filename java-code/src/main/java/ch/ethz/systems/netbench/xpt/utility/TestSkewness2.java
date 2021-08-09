@@ -65,7 +65,7 @@ public class TestSkewness2 {
 
                         // ToR-pair probability with diagonal waste normalized out
                         double torPairProb = torProbI * torProbJ / (1 - wastedProbability);
-                        System.out.println(torPairProb);
+                        System.err.println(torPairProb);
                         // Servers
                         List<Integer> srcServers = new ArrayList<>(result.getRight().getServersOfTor(tors.get(i)));
                         List<Integer> dstServers = new ArrayList<>(result.getRight().getServersOfTor(tors.get(j)));
@@ -81,7 +81,7 @@ public class TestSkewness2 {
 
                 }
             }
-        System.out.println(s);
+        System.err.println(s);
 
 
 

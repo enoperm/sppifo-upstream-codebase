@@ -40,24 +40,24 @@ public class WFQPIFOQueue extends PriorityBlockingQueue implements Queue {
     public int computeRank(Packet p){
         int startTime = this.round;
         //if (this.ownId == 0){
-        //    System.out.println("Rank (" + p.getFlowId() + ") set to " + startTime);
+        //    System.err.println("Rank (" + p.getFlowId() + ") set to " + startTime);
         //}
         if(last_finishTime.containsKey(p.getFlowId())){
             //if (this.ownId == 0){
-            //    System.out.println("Last containing (" + p.getFlowId() + ") is " + last_finishTime.get(p.getFlowId()));
+            //    System.err.println("Last containing (" + p.getFlowId() + ") is " + last_finishTime.get(p.getFlowId()));
             //}
             if((int) last_finishTime.get(p.getFlowId()) > round){
                 startTime = (int)last_finishTime.get(p.getFlowId());
             }
         }
         //if (this.ownId == 0){
-        //    System.out.println("Rank (" + p.getFlowId() + ") updated to " + startTime);
+        //    System.err.println("Rank (" + p.getFlowId() + ") updated to " + startTime);
         //}
         int flowWeight = 8;
         int finishingTime_update = startTime + ((int)p.getSizeBit()/flowWeight);
         last_finishTime.put(p.getFlowId(), finishingTime_update);
         //if (this.ownId == 0){
-        //    System.out.println("Finishing time (" + p.getFlowId() + ") set to " + finishingTime_update);
+        //    System.err.println("Finishing time (" + p.getFlowId() + ") set to " + finishingTime_update);
         //}
         return startTime;
     }
@@ -68,7 +68,7 @@ public class WFQPIFOQueue extends PriorityBlockingQueue implements Queue {
         int rank = (int)header.getPriority();
         this.round = rank;
         //if (this.ownId == 0) {
-        //    System.out.println("Round updated by (" + p.getFlowId() + ") to " + rank);
+        //    System.err.println("Round updated by (" + p.getFlowId() + ") to " + rank);
         //}
     }
 
