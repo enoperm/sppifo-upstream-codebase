@@ -43,13 +43,13 @@ public class TopologyServerExtender {
 
         try {
 
-            System.out.println(
+            System.err.println(
                     "Extending topology file \"" + topologyFileNameIn + "\" by adding " +
                             serversPerTransportLayerNode + " servers to each ToR."
             );
 
 
-            System.out.print("Writing to output topology file...");
+            System.err.print("Writing to output topology file...");
 
             // Open output file stream
             BufferedWriter outputWriter = new BufferedWriter(new FileWriter(topologyFileNameOut));
@@ -92,7 +92,7 @@ public class TopologyServerExtender {
             // Close output file stream
             outputWriter.close();
 
-            System.out.println(" done.");
+            System.err.println(" done.");
 
         } catch (IOException e) {
             throw new RuntimeException("TopologyServerExtender: failed to read/write a topology file: " + e.getMessage());

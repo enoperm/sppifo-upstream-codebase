@@ -19,6 +19,7 @@ public abstract class Event implements Comparable<Event> {
     public Event(long timeFromNowNs) {
         this.time = Simulator.getTimeFromNow(timeFromNowNs);
         this.eid = c;
+        // TODO: correct me if I am wrong, but that does not look thread safe on its own.
         c++;
     }
 

@@ -43,4 +43,11 @@ public class PacketDispatchedEvent extends Event {
         return "PacketDispatchedEvent<" + dispatchPort.getOwnId() + " -> " + dispatchPort.getTargetId() + ", " + this.getTime() + ", " + this.packet + ">";
     }
 
+    public Packet getPacket() {
+        return this.packet;
+    }
+
+    public OutputPort getSourceInterface() {
+        return this.dispatchPort;
+    }
 }

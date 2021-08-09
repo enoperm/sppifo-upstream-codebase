@@ -26,6 +26,7 @@ public class FlowLogger {
     // Logging
     private final boolean flowThroughputEnabled;
 
+    // TODO: Remove dependency on global state (turn "logger" into "tracker" whose state may be logged *externally*)
     public FlowLogger(long flowId, int sourceId, int targetId, long flowSizeByte) {
         this.flowId = flowId;
         this.sourceId = sourceId;

@@ -410,9 +410,9 @@ public class NBProperties extends Properties {
 
         // Display override message
         if (!isPropertyDefined(key)) {
-            System.out.println("WARNING: property " + key + " which is being overridden is not previously defined in the configuration.");
+            System.err.println("WARNING: property " + key + " which is being overridden is not previously defined in the configuration.");
          }
-        System.out.println("Overriding property " + key + ": \"" + getPropertyWithDefault(key, "NON-EXISTING") + "\" (old) -> \"" + overrideValue + "\" (new).");
+        System.err.println("Overriding property " + key + ": \"" + getPropertyWithDefault(key, "NON-EXISTING") + "\" (old) -> \"" + overrideValue + "\" (new).");
 
         // Actually perform override
         this.setProperty(key, overrideValue);

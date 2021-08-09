@@ -368,7 +368,7 @@ public abstract class OutputPort {
      *
      * @return  Queue instance
      */
-    protected Queue<Packet> getQueue() {
+    public Queue<Packet> getQueue() {
         return queue;
     }
 

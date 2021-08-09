@@ -28,7 +28,7 @@ public class MainFromProperties {
      * @param args  Command line arguments
      */
     public static void main(String args[]) {
-
+        System.err.println(args);
         // Load in the configuration properties
         NBProperties runConfiguration = generateRunConfigurationFromArgs(args);
 
@@ -52,23 +52,11 @@ public class MainFromProperties {
         populateRoutingState(initializer.getIdToNetworkDevice());
         planTraffic(runtimeNs, initializer.getIdToTransportLayer());
 
-        // Save analysis command
-        String analysisCommand = Simulator.getConfiguration().getPropertyWithDefault("analysis_command", null);
-
         // Perform run
-        System.out.println("ACTUAL RUN\n==================");
+        System.err.println("ACTUAL RUN\n==================");
         Simulator.runNs(runtimeNs, Simulator.getConfiguration().getLongPropertyWithDefault("finish_when_first_flows_finish", -1));
         Simulator.reset(false);
-        System.out.println("Finished run.\n");
-
-        // Perform analysis
-        System.out.println("ANALYSIS\n==================");
-        if (analysisCommand != null) {
-            runCommand(analysisCommand + " " + SimulationLogger.getRunFolderFull(), true);
-            System.out.println("Finished analysis.");
-        } else {
-            System.out.println("No analysis command given; analysis is skipped.");
-        }
+        System.err.println("Finished run.\n");
     }
 
     /**
@@ -143,7 +131,7 @@ public class MainFromProperties {
     private static BaseInitializer generateInfrastructure() {
 
         // Start infrastructure
-        System.out.println("\nINFRASTRUCTURE\n==================");
+        System.err.println("\nINFRASTRUCTURE\n==================");
 
         // 1.1) Generate nodes
         BaseInitializer initializer = new BaseInitializer(
@@ -157,7 +145,7 @@ public class MainFromProperties {
         initializer.createInfrastructure();
 
         // Finished infrastructure
-        System.out.println("Finished creating infrastructure.\n");
+        System.err.println("Finished creating infrastructure.\n");
 
         return initializer;
 
@@ -171,14 +159,14 @@ public class MainFromProperties {
     private static void populateRoutingState(Map<Integer, NetworkDevice> idToNetworkDevice) {
 
         // Start routing
-        System.out.println("ROUTING STATE\n==================");
+        System.err.println("ROUTING STATE\n==================");
 
         // 2.1) Populate the routing tables in the switches using the topology defined
         RoutingPopulator populator = RoutingSelector.selectPopulator(idToNetworkDevice);
         populator.populateRoutingTables();
 
         // Finish routing
-        System.out.println("Finished routing state setup.\n");
+        System.err.println("Finished routing state setup.\n");
 
     }
 
@@ -191,14 +179,14 @@ public class MainFromProperties {
     private static void planTraffic(long runtimeNs, Map<Integer, TransportLayer> idToTransportLayer) {
 
         // Start traffic generation
-        System.out.println("TRAFFIC\n==================");
+        System.err.println("TRAFFIC\n==================");
 
         // 3.1) Create flow plan for the simulator
         TrafficPlanner planner = TrafficSelector.selectPlanner(idToTransportLayer);
         planner.createPlan(runtimeNs);
 
         // Finish traffic generation
-        System.out.println("Finished generating traffic flow starts.\n");
+        System.err.println("Finished generating traffic flow starts.\n");
 
     }
 
@@ -257,7 +245,7 @@ public class MainFromProperties {
         Process p;
         try {
 
-            System.out.println("Running command \"" + cmd + "\"...");
+            System.err.println("Running command \"" + cmd + "\"...");
 
             // Start process
             p = Runtime.getRuntime().exec(cmd);
@@ -269,19 +257,19 @@ public class MainFromProperties {
             // Read the output from the command
             String s;
             while ((s = stdInput.readLine()) != null && !showOutput) {
-                System.out.println(s);
+                System.err.println(s);
             }
 
             // Read any errors from the attempted command
             while ((s = stdError.readLine()) != null) {
-                System.out.println(s);
+                System.err.println(s);
             }
 
             // Wait for the command thread to be ended
             p.waitFor();
             p.destroy();
 
-            System.out.println("... command has been executed (any output is shown above).");
+            System.err.println("... command has been executed (any output is shown above).");
 
         } catch (Exception e) {
             throw new RuntimeException("Command failed: " + cmd);
