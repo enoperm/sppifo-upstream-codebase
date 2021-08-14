@@ -177,7 +177,7 @@ class InfrastructureSelector {
      *
      * @return  Output port generator
      */
-    static OutputPortGenerator selectOutputPortGenerator() {
+    static OutputPortGenerator selectOutputPortGenerator() throws Exception {
 
         switch (Simulator.getConfiguration().getPropertyOrFail("output_port")) {
 

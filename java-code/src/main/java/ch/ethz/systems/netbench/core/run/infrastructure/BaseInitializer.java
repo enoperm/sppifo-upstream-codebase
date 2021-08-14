@@ -60,7 +60,7 @@ public class BaseInitializer {
     /**
      * Read the base network (servers, network devices, links) from the topology file.
      */
-    public void createInfrastructure() {
+    public void createInfrastructure() throws Exception {
 
         // The infrastructure can only be created once
         if (infrastructureAlreadyCreated) {
@@ -152,7 +152,7 @@ public class BaseInitializer {
      * @param startVertexId     Origin vertex identifier
      * @param endVertexId       Destination vertex identifier
      */
-    private void createEdge(int startVertexId, int endVertexId) {
+    private void createEdge(int startVertexId, int endVertexId) throws Exception {
 
         // Select network devices
         NetworkDevice devA = idToNetworkDevice.get(startVertexId);

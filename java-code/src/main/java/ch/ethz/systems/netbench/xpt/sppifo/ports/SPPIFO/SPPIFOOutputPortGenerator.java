@@ -12,7 +12,7 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
     private final long sizePerQueuePackets;
     private final String stepSize;
 
-    public SPPIFOOutputPortGenerator(long numberQueues, long sizePerQueuePackets, String stepSize) {
+    public SPPIFOOutputPortGenerator(long numberQueues, long sizePerQueuePackets, String stepSize) throws Exception {
         this.numberQueues = numberQueues;
         this.sizePerQueuePackets = sizePerQueuePackets;
         this.stepSize = stepSize;
@@ -21,7 +21,7 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
     }
 
     @Override
-    public OutputPort generate(NetworkDevice ownNetworkDevice, NetworkDevice towardsNetworkDevice, Link link) {
+    public OutputPort generate(NetworkDevice ownNetworkDevice, NetworkDevice towardsNetworkDevice, Link link) throws Exception {
         return new SPPIFOOutputPort(ownNetworkDevice, towardsNetworkDevice, link, numberQueues, sizePerQueuePackets, stepSize);
     }
 

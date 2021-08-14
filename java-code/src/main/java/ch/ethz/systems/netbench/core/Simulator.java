@@ -85,6 +85,9 @@ public class Simulator {
      */
     public static void setup(long seed, NBProperties configuration) {
 
+        // FIXME: why is this not a constructor?
+        // odd design decisions really warrant a comment, at the very least.
+
         // Prevent double setup
         if (isSetup) {
             throw new RuntimeException("The simulator can only be setup once. Call reset() before setting it up again.");
@@ -161,7 +164,7 @@ public class Simulator {
         }
 
         // Log start
-        System.out.println("Starting simulation (total time: " + runtimeNanoseconds + "ns);...");
+        System.err.println("Starting simulation (total time: " + runtimeNanoseconds + "ns);...");
 
         // Time loop
         long startTime = System.currentTimeMillis();
@@ -182,7 +185,7 @@ public class Simulator {
             if (now > nextProgressLog) {
                 nextProgressLog += PROGRESS_SHOW_INTERVAL_NS;
                 long realTimeNow = System.currentTimeMillis();
-                System.out.println("Elapsed 0.01s simulation in " + ((realTimeNow - realTime) / 1000.0) + "s real (total progress: " + ((((double) now) / ((double) runtimeNanoseconds)) * 100) + "%).");
+                System.err.println("Elapsed 0.01s simulation in " + ((realTimeNow - realTime) / 1000.0) + "s real (total progress: " + ((((double) now) / ((double) runtimeNanoseconds)) * 100) + "%).");
                 realTime = realTimeNow;
             }
 
@@ -190,7 +193,6 @@ public class Simulator {
                 endedDueToFlowThreshold = true;
                 break;
             }
-
         }
 
         // Make sure run ends at the final time if it ended because there were no
@@ -200,7 +202,7 @@ public class Simulator {
         }
 
         // Log end
-        System.out.println("Simulation finished (simulated " + (runtimeNanoseconds / 1e9) + "s in a real-world time of " + ((System.currentTimeMillis() - startTime) / 1000.0) + "s).");
+        System.err.println("Simulation finished (simulated " + (runtimeNanoseconds / 1e9) + "s in a real-world time of " + ((System.currentTimeMillis() - startTime) / 1000.0) + "s).");
 
     }
 
@@ -215,6 +217,8 @@ public class Simulator {
         }
     }
 
+    // TODO: Make all of these non-static,
+    // remove reset() so everything that depends on global state breaks and can be refactored.
     /**
      * Register an event in the simulation.
      *
@@ -267,6 +271,7 @@ public class Simulator {
      * @param throwawayLogs     True iff the logs should be thrown out
      */
     public static void reset(boolean throwawayLogs) {
+        // TODO: FIXME: this all should be just instance state rather than global!
 
         // Close logger
         if (throwawayLogs) {

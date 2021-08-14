@@ -48,7 +48,13 @@ public class MainFromProperties {
         manageTopology();
 
         // Initialization of the three components
-        BaseInitializer initializer = generateInfrastructure();
+        BaseInitializer initializer = null;
+        try {
+            initializer = generateInfrastructure();
+        } catch(Exception e) {
+            e.printStackTrace();
+            return;
+        }
         populateRoutingState(initializer.getIdToNetworkDevice());
         planTraffic(runtimeNs, initializer.getIdToTransportLayer());
 
@@ -128,7 +134,7 @@ public class MainFromProperties {
      *
      * @return  Initializer of the infrastructure
      */
-    private static BaseInitializer generateInfrastructure() {
+    private static BaseInitializer generateInfrastructure() throws Exception {
 
         // Start infrastructure
         System.err.println("\nINFRASTRUCTURE\n==================");

@@ -5,6 +5,8 @@ import ch.ethz.systems.netbench.core.network.Packet;
 import ch.ethz.systems.netbench.xpt.tcpbase.FullExtTcpPacket;
 import ch.ethz.systems.netbench.xpt.tcpbase.PriorityHeader;
 import ch.ethz.systems.netbench.core.log.SimulationLogger;
+import ch.ethz.systems.netbench.xpt.sppifo.adaptations.AdaptationAlgorithm;
+import ch.ethz.systems.netbench.xpt.sppifo.adaptations.PUPD;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -13,13 +15,13 @@ import java.util.concurrent.locks.ReentrantLock;
 // General SPPIFO implementation to be used, for instance, when the ranks are specified from the end-host.
 public class SPPIFOQueue implements Queue {
 
-    private final ArrayList<ArrayBlockingQueue> queueList;
+    private final ArrayList<ArrayBlockingQueue<Object>> queueList;
     private final Map<Integer, Integer> queueBounds;
     private ReentrantLock reentrantLock;
     private int ownId;
-    private String stepSize;
+    private AdaptationAlgorithm adaptationAlgorithm;
 
-    public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, String stepSize){
+    public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, String stepSize) throws Exception {
         this.queueList = new ArrayList((int)numQueues);
         this.reentrantLock = new ReentrantLock();
         this.queueBounds = new HashMap<Integer, Integer>();
@@ -31,67 +33,55 @@ public class SPPIFOQueue implements Queue {
             queueBounds.put(i, 0);
         }
         this.ownId = ownNetworkDevice.getIdentifier();
-        this.stepSize = stepSize;
+
+        // TODO: extract, SPPIFOQueue does not need to know anything about PUPD or any other adaptation algorithm.
+        switch(stepSize) {
+        case "1":
+        case "cost":
+        case "rank":
+        case "queueBound":
+            this.adaptationAlgorithm = new PUPD(stepSize);
+            break;
+
+        default:
+            throw new Exception("ERROR: SP-PIFO step size " + stepSize + " is not supported.");
+        }
     }
 
     // Packet dropped and null returned if selected queue exceeds its size
     @Override
     public boolean offer(Object o) {
-
         // Extract rank from header
-        Packet packet = (Packet) o;
-        PriorityHeader header = (PriorityHeader) packet;
+        PriorityHeader header = (PriorityHeader) o;
         int rank = (int)header.getPriority();
 
         this.reentrantLock.lock();
-        boolean returnValue = false;
         try {
-
             // Mapping based on queue bounds
             int currentQueueBound;
             for (int q=queueList.size()-1; q>=0; q--){
                 currentQueueBound = (int)queueBounds.get(q);
                 if ((currentQueueBound <= rank) || q==0) {
                     boolean result = queueList.get(q).offer(o);
-                    if (!result){
-                        returnValue = false;
-                        break;
-                    } else {
+                    if (!result) return false;
 
-                        // Per-packet queue bound adaptation
-                        queueBounds.put(q, rank);
-                        int cost = currentQueueBound - rank;
-                        if (cost > 0){
-                            for (int w=queueList.size()-1; w>q; w--){
-                                currentQueueBound = (int) queueBounds.get(w);
+                    Map<Integer, Integer> newBounds = this.adaptationAlgorithm.nextBounds(this.queueBounds, q, rank);
 
-                                // Update queue bounds
-                                if (this.stepSize.equals("cost")){
-                                    queueBounds.put(w, currentQueueBound-cost);
-                                } else if (this.stepSize.equals("1")){
-                                    queueBounds.put(w, currentQueueBound-1);
-                                } else if (this.stepSize.equals("rank")){
-                                    queueBounds.put(w, currentQueueBound-rank);
-                                } else if (this.stepSize.equals("queueBound")){
-                                    queueBounds.put(w, queueBounds.get(w-1));
-                                } else {
-                                    System.err.println("ERROR: SP-PIFO step size not supported.");
-                                }
-                            }
-                        }
-                        returnValue = true;
-                        break;
+                    for(Map.Entry<Integer, Integer> entry: newBounds.entrySet()) {
+                        int idx = entry.getKey();
+                        int bound = entry.getValue();
+
+                        this.queueBounds.put(idx, bound);
                     }
+                    return true;
                 }
             }
-
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-
         } finally {
             this.reentrantLock.unlock();
-            return returnValue;
         }
+        return false;
     }
 
     @Override
@@ -229,8 +219,6 @@ public class SPPIFOQueue implements Queue {
         }
     }
 
-
-
     @Override
     public Object element() {
         return null;
@@ -239,5 +227,17 @@ public class SPPIFOQueue implements Queue {
     @Override
     public Object peek() {
         return null;
+    }
+
+    public Map<Integer, Integer> getQueueBounds() {
+        Map<Integer, Integer> copy = new HashMap<Integer, Integer>();
+        for(Map.Entry<Integer, Integer> entry: this.queueBounds.entrySet()) {
+            int idx = entry.getKey();
+            int bound = entry.getValue();
+
+            copy.put(idx, bound);
+        }
+
+        return copy;
     }
 }
