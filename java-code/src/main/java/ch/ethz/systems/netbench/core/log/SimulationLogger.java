@@ -550,6 +550,14 @@ public class SimulationLogger {
      * Copy the configuration files.
      */
     public static void copyRunConfiguration() {
+        // TODO: FIXME:
+        // I have wired up the half-done entrypoint to the jar file,
+        // but this function does not account for properties
+        // overridden from command line arguments.
+        // The proper fix is to serialize the run configuration,
+        // instead of copying the file.
+        // Until then, running the application with such overrides
+        // may result in outputs that lie about their own configuration.
         copyFileToRunFolder(Simulator.getConfiguration().getFileName());
     }
 

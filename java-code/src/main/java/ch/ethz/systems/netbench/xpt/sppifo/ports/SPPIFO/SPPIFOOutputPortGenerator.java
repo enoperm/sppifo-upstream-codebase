@@ -12,6 +12,9 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
     private final long sizePerQueuePackets;
     private final String stepSize;
 
+    // TODO: these should take an NBConfiguration instead,
+    // so as to make configuration more flexible
+    // as well as to make InfrastructureSelector more readable.
     public SPPIFOOutputPortGenerator(long numberQueues, long sizePerQueuePackets, String stepSize) throws Exception {
         this.numberQueues = numberQueues;
         this.sizePerQueuePackets = sizePerQueuePackets;

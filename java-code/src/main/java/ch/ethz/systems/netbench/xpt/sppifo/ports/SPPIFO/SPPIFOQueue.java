@@ -7,6 +7,8 @@ import ch.ethz.systems.netbench.xpt.tcpbase.PriorityHeader;
 import ch.ethz.systems.netbench.core.log.SimulationLogger;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.AdaptationAlgorithm;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.PUPD;
+import ch.ethz.systems.netbench.xpt.sppifo.adaptations.SpringAdaptationAlgorithm;
+import ch.ethz.systems.netbench.xpt.sppifo.adaptations.InversionTracker;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -34,13 +36,19 @@ public class SPPIFOQueue implements Queue {
         }
         this.ownId = ownNetworkDevice.getIdentifier();
 
-        // TODO: extract, SPPIFOQueue does not need to know anything about PUPD or any other adaptation algorithm.
+        // TODO: extract, SPPIFOQueue does not need to know anything about PUPD or any other adaptation algorithm,
+        // apart from knowing how to call one that it received on its constructor.
         switch(stepSize) {
+        // PUPD:
         case "1":
         case "cost":
         case "rank":
         case "queueBound":
             this.adaptationAlgorithm = new PUPD(stepSize);
+            break;
+        // Spring heuristic:
+        case "spring":
+            this.adaptationAlgorithm = new SpringAdaptationAlgorithm();
             break;
 
         default:
@@ -192,7 +200,8 @@ public class SPPIFOQueue implements Queue {
                     // Check whether there is an inversion: a packet with smaller rank in queue than the one polled
                     if (SimulationLogger.hasInversionsTrackingEnabled()) {
                         int rankSmallest = 1000;
-                        for (int i = 0; i <= queueList.size() - 1; i++) {
+                        int i = 0;
+                        for (; i <= queueList.size() - 1; i++) {
                             Object[] currentQueue = queueList.get(i).toArray();
                             if (currentQueue.length > 0) {
                                 Arrays.sort(currentQueue);
@@ -205,6 +214,10 @@ public class SPPIFOQueue implements Queue {
 
                         if (rankSmallest < rank) {
                             SimulationLogger.logInversionsPerRank(this.ownId, rank, 1);
+                            if(this.adaptationAlgorithm instanceof InversionTracker) {
+                                InversionTracker t = (InversionTracker)this.adaptationAlgorithm;
+                                t.inversionInQueue(i);
+                            }
                         }
                     }
 
