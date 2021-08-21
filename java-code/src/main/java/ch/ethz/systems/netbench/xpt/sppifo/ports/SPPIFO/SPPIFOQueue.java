@@ -186,10 +186,7 @@ public class SPPIFOQueue implements Queue {
 
                     if(SimulationLogger.hasQueueBoundTrackingEnabled()){
                         for (int c=queueList.size()-1; c>=0; c--){
-                            // FIXME: This is NOT the bound of he cth queue.
-                            // This is the LEGNTH of that queue.
-                            // Actual bounds are stored in the queueBounds map.
-                            SimulationLogger.logQueueBound(this.ownId, c, queueList.get(c).size());
+                            SimulationLogger.logQueueBound(this.ownId, c, queueBounds.get(c));
                         }
                     }
 
