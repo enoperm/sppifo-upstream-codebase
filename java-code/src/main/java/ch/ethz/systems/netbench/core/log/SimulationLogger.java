@@ -6,6 +6,7 @@ import ch.ethz.systems.netbench.core.run.MainFromProperties;
 import org.apache.commons.io.output.TeeOutputStream;
 
 import java.io.*;
+import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -177,18 +178,9 @@ public class SimulationLogger {
             writerFlowThroughputFile = openWriter("flow_throughput.csv.log");
             writerFlowCompletionCsvFile = openWriter("flow_completion.csv.log");
             writerFlowCompletionFile = openWriter("flow_completion.log");
-
-            // Writer out the final properties' values
-            if (tempRunConfiguration != null) {
-                BufferedWriter finalPropertiesInfoFile = openWriter("final_properties.info");
-                finalPropertiesInfoFile.write(tempRunConfiguration.getAllPropertiesToString());
-                finalPropertiesInfoFile.close();
-            }
-
         } catch (IOException e) {
             throw new LogFailureException(e);
         }
-
     }
 
     /**
@@ -209,9 +201,8 @@ public class SimulationLogger {
      */
     private static BufferedWriter openWriter(String logFileName) {
         try {
-            return new BufferedWriter(
-                    new FileWriter(getRunFolderFull() + "/" + logFileName)
-            );
+            Path path = Paths.get(getRunFolderFull(), logFileName);
+            return Files.newBufferedWriter(path);
         } catch (IOException e) {
             throw new LogFailureException(e);
         }
@@ -547,9 +538,9 @@ public class SimulationLogger {
     }
 
     /**
-     * Copy the configuration files.
+     * Save the runtime configuration files.
      */
-    public static void copyRunConfiguration() {
+    public static void saveRunConfiguration() throws IOException {
         // TODO: FIXME:
         // I have wired up the half-done entrypoint to the jar file,
         // but this function does not account for properties
@@ -558,7 +549,13 @@ public class SimulationLogger {
         // instead of copying the file.
         // Until then, running the application with such overrides
         // may result in outputs that lie about their own configuration.
-        copyFileToRunFolder(Simulator.getConfiguration().getFileName());
+        String configurationBase = Paths.get(Simulator.getConfiguration().getFileName()).getFileName().toString();
+        BufferedWriter output = openWriter(configurationBase);
+        try {
+            Simulator.getConfiguration().store(output, "Based on " + configurationBase);
+        } finally {
+            output.close();
+        }
     }
 
     /**
@@ -567,7 +564,7 @@ public class SimulationLogger {
      * @param fileName  File name
      */
     private static void copyFileToRunFolder(String fileName) {
-        System.out.println("Copying file \"" + fileName + "\" to run folder...");
+        System.err.println("Copying file \"" + fileName + "\" to run folder...");
         MainFromProperties.runCommand("cp " + fileName + " " + getRunFolderFull(), false);
     }
 
@@ -578,7 +575,7 @@ public class SimulationLogger {
      * @param newFileName   New file name
      */
     public static void copyFileToRunFolder(String fileName, String newFileName) {
-        System.out.println("Copying file \"" + fileName + "\" to run folder using new file name \"" + newFileName + "\"...");
+        System.err.println("Copying file \"" + fileName + "\" to run folder using new file name \"" + newFileName + "\"...");
         MainFromProperties.runCommand("cp " + fileName + " " + getRunFolderFull() + "/" + newFileName, false);
     }
 

@@ -1,9 +1,11 @@
 package ch.ethz.systems.netbench.core.run;
 
+import java.io.IOException;
+
 public class MainFromIntelliJ {
 
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
 
         /* Figure 5: SP-PIFO performance (uniform rank distribution) */
 

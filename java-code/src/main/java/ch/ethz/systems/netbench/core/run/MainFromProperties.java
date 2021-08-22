@@ -17,6 +17,7 @@ import ch.ethz.systems.netbench.core.run.traffic.TrafficPlanner;
 import ch.ethz.systems.netbench.core.utility.UnitConverter;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
 
@@ -27,8 +28,7 @@ public class MainFromProperties {
      *
      * @param args  Command line arguments
      */
-    public static void main(String args[]) {
-        System.err.println(args);
+    public static void main(String args[]) throws IOException {
         // Load in the configuration properties
         NBProperties runConfiguration = generateRunConfigurationFromArgs(args);
 
@@ -41,8 +41,8 @@ public class MainFromProperties {
         // Setup simulator (it is now public known)
         Simulator.setup(seed, runConfiguration);
 
-        // Copy configuration files for reproducibility
-        SimulationLogger.copyRunConfiguration();
+        // Save configuration files for reproducibility
+        SimulationLogger.saveRunConfiguration();
 
         // Manage topology (e.g. extend with servers if said by configuration)
         manageTopology();
@@ -94,14 +94,13 @@ public class MainFromProperties {
         // Dynamic overwrite of temporary config using arguments given from command line
         for (int i = 1; i < args.length; i++) {
             int index = args[i].indexOf('=');
-            assert( index != -1);
+            assert(index != -1);
             String param = args[i].substring(0, index);
             String value = args[i].substring(index + 1);
             runConfiguration.overrideProperty(param, value);
         }
 
         return runConfiguration;
-
     }
 
     /**

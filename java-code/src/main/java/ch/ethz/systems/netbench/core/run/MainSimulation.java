@@ -1,8 +1,10 @@
 package ch.ethz.systems.netbench.core.run;
 
+import java.io.IOException;
+
 public class MainSimulation {
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
         if (args.length == 0) {
             System.err.println("Please specify which experiments to run!");
         }
