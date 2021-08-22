@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+
+NETBENCH=${NETBENCH:?must specify command line to launch NetBench}
+
+parallel --tag --line-buffer <<SIM
+# Figure 6: SP-PIFO performance (alternative distributions)
+    # Figure 6a: Exponential
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/exponential/FIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/exponential/SPPIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/exponential/Greedy.properties'
+
+    # Figure 6b: Inverse exponential
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/inverse_exponential/FIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/inverse_exponential/SPPIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/inverse_exponential/Greedy.properties'
+
+    # Figure 6c: Poisson
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/poisson/FIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/poisson/SPPIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/poisson/Greedy.properties'
+
+    # Figure 6d: Convex
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/convex/FIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/convex/SPPIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/convex/Greedy.properties'
+SIM
+
+# Analyze and plot
+python3 projects/sppifo/plots/sppifo_analysis/alternative_distributions/analyze.py
+gnuplot projects/sppifo/plots/sppifo_analysis/alternative_distributions/exponential/plot.gnuplot
+gnuplot projects/sppifo/plots/sppifo_analysis/alternative_distributions/inverse_exponential/plot.gnuplot
+gnuplot projects/sppifo/plots/sppifo_analysis/alternative_distributions/poisson/plot.gnuplot
+gnuplot projects/sppifo/plots/sppifo_analysis/alternative_distributions/convex/plot.gnuplot

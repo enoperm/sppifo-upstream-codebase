@@ -1,0 +1,43 @@
+#!/usr/bin/env sh
+
+# Figure 8: pFabric: FCT statistics across different flow sizes in web search workload
+parallel --tag --line-buffer <<SIM
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/3600/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/3600/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/3600/PIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/3600/SPPIFO.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/5200/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/5200/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/5200/PIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/5200/SPPIFO.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/7000/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/7000/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/7000/PIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/7000/SPPIFO.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/8900/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/8900/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/8900/PIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/8900/SPPIFO.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/11100/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/11100/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/11100/PIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/11100/SPPIFO.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/14150/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/14150/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/14150/PIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/14150/SPPIFO.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/19000/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/19000/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/19000/PIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/19000/SPPIFO.properties'
+SIM
+
+# Analyze and plot
+python3 projects/sppifo/plots/sppifo_evaluation/pFabric/web_search_workload/analyze.py
+gnuplot projects/sppifo/plots/sppifo_evaluation/pFabric/web_search_workload/plot.gnuplot

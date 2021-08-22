@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+
+parallel --tag --line-buffer <<SIM
+# Figure 14: Greedy algorithm adaptation microbenchmark
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/adaptation_period/Greedy_Uniform_50.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/adaptation_period/Greedy_Uniform_250.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/adaptation_period/Greedy_Uniform_500.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/adaptation_period/Greedy_Uniform_1000.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/adaptation_period/Greedy_Uniform_2500.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/adaptation_period/Greedy_Uniform_5000.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/adaptation_period/Greedy_Uniform_7000.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/num_queues/Greedy_Uniform_4.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/num_queues/Greedy_Uniform_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/num_queues/Greedy_Uniform_12.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/num_queues/Greedy_Uniform_16.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/num_queues/Greedy_Uniform_20.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/num_queues/Greedy_Uniform_24.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/num_queues/Greedy_Uniform_28.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/num_queues/Greedy_Uniform_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/max_rank/Greedy_Uniform_50.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/max_rank/Greedy_Uniform_100.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/max_rank/Greedy_Uniform_200.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/max_rank/Greedy_Uniform_400.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/max_rank/Greedy_Uniform_600.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/max_rank/Greedy_Uniform_800.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/max_rank/Greedy_Uniform_1000.properties'
+SIM
+
+# Analyze and plot
+python3 projects/sppifo/plots/greedy_microbenchmark/analyze.py
+gnuplot projects/sppifo/plots/greedy_microbenchmark/plot.gnuplot

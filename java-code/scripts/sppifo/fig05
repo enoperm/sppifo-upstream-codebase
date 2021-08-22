@@ -1,0 +1,61 @@
+#!/usr/bin/env sh
+
+parallel --tag --line-buffer <<SIM
+# Figure 5: SP-PIFO performance (uniform rank distribution)
+    # Figure 5a: Uniform 8 queues
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/uniform_8_queues/FIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/uniform_8_queues/SPPIFO.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/uniform_8_queues/Fixed_queue_bounds.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/uniform_8_queues/Greedy.properties'
+
+    # Figure 5b: Uniform 32 queues
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/uniform_32_queues/FIFO_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/uniform_32_queues/SPPIFO_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/uniform_32_queues/Fixed_queue_bounds_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/uniform_32_queues/Greedy_32.properties'
+
+    # Figure 5c: Adaptation strategies
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/adaptation_strategies/SPPIFO_queuebound.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/adaptation_strategies/SPPIFO_cost.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/adaptation_strategies/SPPIFO_rank.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/adaptation_strategies/SPPIFO_1.properties'
+
+    # Figure 5d: Utilization
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/SPPIFO_20.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/SPPIFO_40.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/SPPIFO_60.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/SPPIFO_80.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/SPPIFO_90.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/Greedy_20.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/Greedy_40.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/Greedy_60.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/Greedy_80.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/Greedy_90.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/FIFO_20.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/FIFO_40.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/FIFO_60.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/FIFO_80.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/utilization/FIFO_90.properties'
+
+    # Analyze and plot
+    python3 projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/uniform_8_queues/analyze.py
+    gnuplot projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/uniform_8_queues/plot.gnuplot
+    python3 projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/uniform_32_queues/analyze.py
+    gnuplot projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/uniform_32_queues/plot.gnuplot
+    python3 projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/adaptation_strategies/analyze.py
+    gnuplot projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/adaptation_strategies/plot.gnuplot
+    python3 projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/utilization/analyze.py
+    gnuplot projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/utilization/plot.gnuplot
+SIM
+
+# Analyze and plot
+python3 projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/uniform_8_queues/analyze.py
+gnuplot projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/uniform_8_queues/plot.gnuplot
+python3 projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/uniform_32_queues/analyze.py
+gnuplot projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/uniform_32_queues/plot.gnuplot
+python3 projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/adaptation_strategies/analyze.py
+gnuplot projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/adaptation_strategies/plot.gnuplot
+python3 projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/utilization/analyze.py
+gnuplot projects/sppifo/plots/sppifo_analysis/uniform_rank_distribution/utilization/plot.gnuplot

@@ -1,0 +1,114 @@
+#!/usr/bin/env sh
+
+realpath="$(dirname "$(readlink -f "${0}")")"
+
+parallel --tag --line-buffer <<SIM
+    # Figure 9: Fairness: FCT statistics for all flows at different loads, over the web search workload
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/PIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/SPPIFOWFQ_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/5200/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/5200/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/5200/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/5200/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/5200/PIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/5200/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/5200/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/5200/SPPIFOWFQ_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/7000/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/7000/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/7000/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/7000/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/7000/PIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/7000/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/7000/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/7000/SPPIFOWFQ_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/8900/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/8900/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/8900/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/8900/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/8900/PIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/8900/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/8900/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/8900/SPPIFOWFQ_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/11100/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/11100/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/11100/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/11100/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/11100/PIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/11100/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/11100/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/11100/SPPIFOWFQ_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/14150/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/14150/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/14150/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/14150/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/14150/PIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/14150/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/14150/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/14150/SPPIFOWFQ_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/19000/TCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/19000/DCTCP.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/19000/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/19000/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/19000/PIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/19000/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/19000/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/19000/SPPIFOWFQ_32.properties'
+
+    # Figure 10: Fairness: FCT statistics for all flows at different loads, when the number of queues is modified
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/3600/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/3600/AFQ_16.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/3600/AFQ_24.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/3600/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/3600/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/3600/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/3600/SPPIFOWFQ_16.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/3600/SPPIFOWFQ_24.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/3600/SPPIFOWFQ_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/7000/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/7000/AFQ_16.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/7000/AFQ_24.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/7000/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/7000/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/7000/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/7000/SPPIFOWFQ_16.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/7000/SPPIFOWFQ_24.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/7000/SPPIFOWFQ_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/11100/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/11100/AFQ_16.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/11100/AFQ_24.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/11100/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/11100/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/11100/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/11100/SPPIFOWFQ_16.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/11100/SPPIFOWFQ_24.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/11100/SPPIFOWFQ_32.properties'
+
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/19000/AFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/19000/AFQ_16.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/19000/AFQ_24.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/19000/AFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/19000/PIFOWFQ_32.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/19000/SPPIFOWFQ_8.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/19000/SPPIFOWFQ_16.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/19000/SPPIFOWFQ_24.properties'
+    ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/queue_analysis/19000/SPPIFOWFQ_32.properties'
+SIM
+
+# Analyze and plot
+python projects/sppifo/plots/sppifo_evaluation/fairness/analyze.py
+gnuplot projects/sppifo/plots/sppifo_evaluation/fairness/plot.gnuplot

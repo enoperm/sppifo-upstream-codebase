@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+parallel --tag --line-buffer <<SIM
+# Figure 13: Greedy convergence for uniform rank distribution (we add extra distributions that are not included in the paper)
+    ${NETBENCH} 'projects/sppifo/runs/greedy_convergence/Greedy_Uniform.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_convergence/Greedy_Exponential.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_convergence/Greedy_InverseExponential.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_convergence/Greedy_MinMax.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_convergence/Greedy_Poisson.properties'
+    ${NETBENCH} 'projects/sppifo/runs/greedy_convergence/Greedy_Convex.properties'
+SIM
+
+# Analyze and plot
+python3 projects/sppifo/plots/greedy_convergence/analyze.py
+gnuplot projects/sppifo/plots/greedy_convergence/plot.gnuplot
