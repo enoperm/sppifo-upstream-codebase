@@ -1,5 +1,7 @@
 package ch.ethz.systems.netbench.xpt.sppifo.adaptations;
 
+import ch.ethz.systems.netbench.core.config.NBProperties;
+
 import java.util.*;
 import java.util.function.*;
 
@@ -18,11 +20,10 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
     private double alpha;
     private double sensitivity;
 
-    public SpringAdaptationAlgorithm() {
-        // TODO: take configuration from caller..
-        this.alpha = 0.0;
-        this.sensitivity = 1.0;
-        this.samplingInterval = 1000; 
+    public SpringAdaptationAlgorithm(NBProperties settings) {
+        this.alpha = settings.getDoublePropertyOrFail("spring_alpha");
+        this.sensitivity = settings.getDoublePropertyOrFail("spring_sensitivity");
+        this.samplingInterval = settings.getLongPropertyOrFail("spring_sample_interval"); 
         this.rotateStats(null);
     }
 

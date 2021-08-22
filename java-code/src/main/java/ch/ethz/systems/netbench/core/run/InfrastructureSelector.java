@@ -71,33 +71,23 @@ class InfrastructureSelector {
          */
         IntermediaryGenerator intermediaryGenerator;
         switch (Simulator.getConfiguration().getPropertyOrFail("network_device_intermediary")) {
-
-            case "demo": {
+            case "demo":
                 intermediaryGenerator = new DemoIntermediaryGenerator();
                 break;
-            }
-
-            case "identity": {
+            case "identity":
                 intermediaryGenerator = new IdentityFlowletIntermediaryGenerator();
                 break;
-            }
-
-            case "uniform": {
+            case "uniform":
                 intermediaryGenerator = new UniformFlowletIntermediaryGenerator();
                 break;
-            }
-
-            case "low_high_priority": {
+            case "low_high_priority":
                 intermediaryGenerator = new PriorityFlowletIntermediaryGenerator();
                 break;
-            }
-
             default:
                 throw new PropertyValueInvalidException(
-                        Simulator.getConfiguration(),
-                        "network_device_intermediary"
+                    Simulator.getConfiguration(),
+                    "network_device_intermediary"
                 );
-
         }
 
         /*
@@ -188,11 +178,7 @@ class InfrastructureSelector {
                 );
 
             case "sppifo":
-                return new SPPIFOOutputPortGenerator(
-                        Simulator.getConfiguration().getLongPropertyOrFail("output_port_number_queues"),
-                        Simulator.getConfiguration().getLongPropertyOrFail("output_port_max_size_per_queue_packets"),
-                        Simulator.getConfiguration().getPropertyOrFail("output_port_step_size")
-                );
+                return new SPPIFOOutputPortGenerator(Simulator.getConfiguration());
 
             case "greedy_simple":
                 return new GreedyOutputPortGenerator_Simple(

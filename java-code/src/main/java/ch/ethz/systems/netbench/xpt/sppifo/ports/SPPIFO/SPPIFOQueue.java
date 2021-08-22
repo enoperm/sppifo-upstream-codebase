@@ -6,8 +6,6 @@ import ch.ethz.systems.netbench.xpt.tcpbase.FullExtTcpPacket;
 import ch.ethz.systems.netbench.xpt.tcpbase.PriorityHeader;
 import ch.ethz.systems.netbench.core.log.SimulationLogger;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.AdaptationAlgorithm;
-import ch.ethz.systems.netbench.xpt.sppifo.adaptations.PUPD;
-import ch.ethz.systems.netbench.xpt.sppifo.adaptations.SpringAdaptationAlgorithm;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.InversionTracker;
 
 import java.util.*;
@@ -17,42 +15,25 @@ import java.util.concurrent.locks.ReentrantLock;
 // General SPPIFO implementation to be used, for instance, when the ranks are specified from the end-host.
 public class SPPIFOQueue implements Queue {
 
-    private final ArrayList<ArrayBlockingQueue<PriorityHeader>> queueList;
+    private final ArrayList<ArrayBlockingQueue<Object>> queueList;
     private final Map<Integer, Integer> queueBounds;
     private ReentrantLock reentrantLock;
     private int ownId;
     private AdaptationAlgorithm adaptationAlgorithm;
 
-    public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, String stepSize) throws Exception {
-        this.queueList = new ArrayList<ArrayBlockingQueue<PriorityHeader>>((int)numQueues);
+    public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, AdaptationAlgorithm adaptationAlgorithm) throws Exception {
+        this.queueList = new ArrayList((int)numQueues);
         this.reentrantLock = new ReentrantLock();
         this.queueBounds = new HashMap<Integer, Integer>();
+        this.adaptationAlgorithm = adaptationAlgorithm;
 
+        ArrayBlockingQueue fifo;
         for (int i = 0; i < numQueues; i++){
-            ArrayBlockingQueue<PriorityHeader> fifo = new ArrayBlockingQueue<PriorityHeader>((int)perQueueCapacity);
+            fifo = new ArrayBlockingQueue<Packet>((int)perQueueCapacity);
             queueList.add(fifo);
             queueBounds.put(i, 0);
         }
         this.ownId = ownNetworkDevice.getIdentifier();
-
-        // TODO: extract, SPPIFOQueue does not need to know anything about PUPD or any other adaptation algorithm,
-        // apart from knowing how to call one that it received on its constructor.
-        switch(stepSize) {
-        // PUPD:
-        case "1":
-        case "cost":
-        case "rank":
-        case "queueBound":
-            this.adaptationAlgorithm = new PUPD(stepSize);
-            break;
-        // Spring heuristic:
-        case "spring":
-            this.adaptationAlgorithm = new SpringAdaptationAlgorithm();
-            break;
-
-        default:
-            throw new Exception("ERROR: SP-PIFO step size " + stepSize + " is not supported.");
-        }
     }
 
     // Packet dropped and null returned if selected queue exceeds its size
@@ -69,7 +50,7 @@ public class SPPIFOQueue implements Queue {
             for (int q=queueList.size()-1; q>=0; q--){
                 currentQueueBound = (int)queueBounds.get(q);
                 if ((currentQueueBound <= rank) || q==0) {
-                    boolean result = queueList.get(q).offer(header);
+                    boolean result = queueList.get(q).offer(o);
                     if (!result) return false;
 
                     Map<Integer, Integer> newBounds = this.adaptationAlgorithm.nextBounds(this.queueBounds, q, rank);
@@ -173,11 +154,14 @@ public class SPPIFOQueue implements Queue {
     public Object poll() {
         this.reentrantLock.lock();
         try {
-            PriorityHeader header;
-            for (int q = 0; q < queueList.size(); q++){
-                header = queueList.get(q).poll();
-                if (header != null){
+            Packet p;
+            for (int q=0; q<queueList.size(); q++){
+                p = (Packet) queueList.get(q).poll();
+                if (p != null){
+
+                    PriorityHeader header = (PriorityHeader) p;
                     int rank = (int)header.getPriority();
+                    // System.err.println("SPPIFO: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
 
                     // Log rank of packet enqueued and queue selected if enabled
                     if(SimulationLogger.hasRankMappingEnabled()){
@@ -192,15 +176,16 @@ public class SPPIFOQueue implements Queue {
 
                     // Check whether there is an inversion: a packet with smaller rank in queue than the one polled
                     if (SimulationLogger.hasInversionsTrackingEnabled()) {
-                        int rankSmallest = Integer.MAX_VALUE;
+                        int rankSmallest = 1000;
                         int i = 0;
-                        for (; rankSmallest >= rank && i < queueList.size(); i++) {
-                            PriorityHeader[] currentQueue = null;
-                            currentQueue = queueList.get(i).toArray(currentQueue);
-                            for(PriorityHeader queued: currentQueue) {
-                                int qp = (int)queued.getPriority();
-                                rankSmallest = qp < rankSmallest ? qp : rankSmallest;
-                                if(rankSmallest < rank) break;
+                        for (; i <= queueList.size() - 1; i++) {
+                            Object[] currentQueue = queueList.get(i).toArray();
+                            if (currentQueue.length > 0) {
+                                Arrays.sort(currentQueue);
+                                FullExtTcpPacket currentMin = (FullExtTcpPacket) currentQueue[0];
+                                if ((int)currentMin.getPriority() < rankSmallest){
+                                    rankSmallest = (int) currentMin.getPriority();
+                                }
                             }
                         }
 
@@ -213,7 +198,7 @@ public class SPPIFOQueue implements Queue {
                         }
                     }
 
-                    return header;
+                    return p;
                 }
             }
             return null;

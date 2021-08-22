@@ -96,6 +96,11 @@ public class BaseAllowedProperties {
             "output_port_adaptation_period",
             "transport_layer_rank_distribution",
             "transport_layer_rank_bound",
+                // SP-PIFO spring heuristic
+                "spring_alpha",
+                "spring_sensitivity",
+                "spring_sample_interval",
+
 
             // TCP
             "TCP_ROUND_TRIP_TIMEOUT_NS",
