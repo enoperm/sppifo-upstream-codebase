@@ -1,5 +1,6 @@
 package ch.ethz.systems.netbench.xpt.sppifo.ports.SPPIFO;
 
+import ch.ethz.systems.netbench.xpt.sppifo.adaptations.PUPD;
 import ch.ethz.systems.netbench.core.Simulator;
 import ch.ethz.systems.netbench.core.network.Packet;
 import ch.ethz.systems.netbench.xpt.tcpbase.PriorityHeader;
@@ -41,18 +42,18 @@ public class PUPDIntegrationTest {
 
         List<Map<Integer, Integer>> expectedBounds = new ArrayList<Map<Integer, Integer>>();
         {
-            expectedBounds.add(Map.of(
-                0,  0,
-                1, 13
-            ));
-            expectedBounds.add(Map.of(
-                0,  7,
-                1, 13
-            ));
-            expectedBounds.add(Map.of(
-                0,  3,
-                1, 12
-            ));
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  0);
+                put(1, 13);
+            }});
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  7);
+                put(1, 13);
+            }});
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  3);
+                put(1, 12);
+            }});
         }
 
         for(int t = 0; t < boundsOverTime.size(); ++t) {
@@ -72,18 +73,18 @@ public class PUPDIntegrationTest {
 
         List<Map<Integer, Integer>> expectedBounds = new ArrayList<Map<Integer, Integer>>();
         {
-            expectedBounds.add(Map.of(
-                0,  0,
-                1, 13
-            ));
-            expectedBounds.add(Map.of(
-                0,  7,
-                1, 13
-            ));
-            expectedBounds.add(Map.of(
-                0,  3,
-                1,  9
-            ));
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  0);
+                put(1, 13);
+            }});
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  7);
+                put(1, 13);
+            }});
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  3);
+                put(1,  9);
+            }});
         }
 
         for(int t = 0; t < boundsOverTime.size(); ++t) {
@@ -103,18 +104,18 @@ public class PUPDIntegrationTest {
 
         List<Map<Integer, Integer>> expectedBounds = new ArrayList<Map<Integer, Integer>>();
         {
-            expectedBounds.add(Map.of(
-                0,  0,
-                1, 13
-            ));
-            expectedBounds.add(Map.of(
-                0,  7,
-                1, 13
-            ));
-            expectedBounds.add(Map.of(
-                0,  3,
-                1, 10
-            ));
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  0);
+                put(1, 13);
+            }});
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  7);
+                put(1, 13);
+            }});
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  3);
+                put(1, 10);
+            }});
         }
 
         for(int t = 0; t < boundsOverTime.size(); ++t) {
@@ -134,18 +135,18 @@ public class PUPDIntegrationTest {
 
         List<Map<Integer, Integer>> expectedBounds = new ArrayList<Map<Integer, Integer>>();
         {
-            expectedBounds.add(Map.of(
-                0,  0,
-                1, 13
-            ));
-            expectedBounds.add(Map.of(
-                0,  7,
-                1, 13
-            ));
-            expectedBounds.add(Map.of(
-                0, 3,
-                1, 3
-            ));
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  0);
+                put(1, 13);
+            }});
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0,  7);
+                put(1, 13);
+            }});
+            expectedBounds.add(new HashMap<Integer, Integer>() {{
+                put(0, 3);
+                put(1, 3);
+            }});
         }
 
         for(int t = 0; t < boundsOverTime.size(); ++t) {
@@ -159,7 +160,7 @@ public class PUPDIntegrationTest {
     }
 
     private SPPIFOQueue getTestUnit(String pushdownBehaviour) throws Exception {
-        return new SPPIFOQueue(2, 10, this.networkDevice, pushdownBehaviour);
+        return new SPPIFOQueue(2, 10, this.networkDevice, new PUPD(pushdownBehaviour));
     }
 
     private List<Map<Integer, Integer>> feedTestSequence(SPPIFOQueue q) {
