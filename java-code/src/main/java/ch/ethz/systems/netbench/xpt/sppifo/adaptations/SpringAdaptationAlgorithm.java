@@ -5,7 +5,7 @@ import ch.ethz.systems.netbench.core.config.NBProperties;
 import java.util.*;
 import java.util.function.*;
 
-public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, InversionTracker {
+public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, InversionTracker, BoundsInitializationAlgorithm {
     private class CostFunctionInput {
         public int bound;
         public int cost;
@@ -19,11 +19,13 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
     private long packetCounter;
     private double alpha;
     private double sensitivity;
+    private int maxRank;
 
     public SpringAdaptationAlgorithm(NBProperties settings) {
         this.alpha = settings.getDoublePropertyOrFail("spring_alpha");
         this.sensitivity = settings.getDoublePropertyOrFail("spring_sensitivity");
         this.samplingInterval = settings.getLongPropertyOrFail("spring_sample_interval"); 
+        this.maxRank = settings.getIntegerPropertyOrFail("transport_layer_rank_bound");
         this.rotateStats(null);
     }
 
@@ -76,7 +78,9 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
         }
 
         for(int i = 0; i < next.length; ++i) {
-            next[i] = (int)Math.round(next[i] + forces[i]);
+            next[i] = (int)Math.round(
+                Math.min((double)this.maxRank, Math.max(next[i] + forces[i], 1.0))
+            );
         }
 
         // put bounds in order and convert to return type.
@@ -95,5 +99,21 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
     @Override
     public void inversionInQueue(int queueIndex) {
         this.inversionCounts.put(queueIndex, this.inversionCounts.getOrDefault(queueIndex, 0L) + 1);
+    }
+
+
+    @Override
+    public void initBounds(Map<Integer, Integer> destination, int perQueueCapacity) {
+        // TODO: factor out uniform init to be able to swap initialization algorithms as well.
+        int numQueues = destination.size();
+        // ranks start at zero, LstfTcpSocket may generate up to and including maxRank,
+        // thus there are maxRank + 1 possible ranks.
+        int numRanks = this.maxRank + 1;
+
+        double queueWidth = numQueues / (double)numRanks;
+        for(Map.Entry<Integer, Integer> entry: destination.entrySet()) {
+            int queueIndex = entry.getKey();
+            destination.put(queueIndex, (int)Math.round(queueIndex * queueWidth));
+        }
     }
 }

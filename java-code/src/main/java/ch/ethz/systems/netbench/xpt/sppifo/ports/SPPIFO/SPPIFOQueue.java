@@ -2,10 +2,13 @@ package ch.ethz.systems.netbench.xpt.sppifo.ports.SPPIFO;
 
 import ch.ethz.systems.netbench.core.network.NetworkDevice;
 import ch.ethz.systems.netbench.core.network.Packet;
+// TODO: do not need more than PrioritHeader, do we?
+// FIXME: since PriorityHeader extends a TCP interface, we can't test with alternate L4 protocols such as SCTP or UDP.
 import ch.ethz.systems.netbench.xpt.tcpbase.FullExtTcpPacket;
 import ch.ethz.systems.netbench.xpt.tcpbase.PriorityHeader;
 import ch.ethz.systems.netbench.core.log.SimulationLogger;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.AdaptationAlgorithm;
+import ch.ethz.systems.netbench.xpt.sppifo.adaptations.BoundsInitializationAlgorithm;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.InversionTracker;
 
 import java.util.*;
@@ -27,13 +30,23 @@ public class SPPIFOQueue implements Queue {
         this.queueBounds = new HashMap<Integer, Integer>();
         this.adaptationAlgorithm = adaptationAlgorithm;
 
-        ArrayBlockingQueue<PriorityHeader> fifo;
+        ArrayBlockingQueue<Object> fifo;
         for (int i = 0; i < numQueues; i++){
-            fifo = new ArrayBlockingQueue<PriorityHeader>((int)perQueueCapacity);
+            fifo = new ArrayBlockingQueue<Object>((int)perQueueCapacity);
             queueList.add(fifo);
             queueBounds.put(i, 0);
         }
         this.ownId = ownNetworkDevice.getIdentifier();
+
+        if(this.adaptationAlgorithm instanceof BoundsInitializationAlgorithm) {
+            BoundsInitializationAlgorithm bia = (BoundsInitializationAlgorithm)this.adaptationAlgorithm;
+            // TODO: this class takes longs, but the queue bounds are ints,
+            // so there are configurations we could be asked for but not represent.
+            // Either make these ints or represent bounds with longs as well.
+            // we pass queueBounds along because it is final and we cannot reassign.
+            // number of queues is same as the initial size of this map.
+            bia.initBounds(this.queueBounds, (int)perQueueCapacity);
+        }
     }
 
     // Packet dropped and null returned if selected queue exceeds its size
