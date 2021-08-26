@@ -27,9 +27,9 @@ public class SPPIFOQueue implements Queue {
         this.queueBounds = new HashMap<Integer, Integer>();
         this.adaptationAlgorithm = adaptationAlgorithm;
 
-        ArrayBlockingQueue fifo;
+        ArrayBlockingQueue<PriorityHeader> fifo;
         for (int i = 0; i < numQueues; i++){
-            fifo = new ArrayBlockingQueue<Packet>((int)perQueueCapacity);
+            fifo = new ArrayBlockingQueue<PriorityHeader>((int)perQueueCapacity);
             queueList.add(fifo);
             queueBounds.put(i, 0);
         }
@@ -154,12 +154,12 @@ public class SPPIFOQueue implements Queue {
     public Object poll() {
         this.reentrantLock.lock();
         try {
-            Packet p;
+            PriorityHeader p;
             for (int q=0; q<queueList.size(); q++){
-                p = (Packet) queueList.get(q).poll();
+                p = (PriorityHeader) queueList.get(q).poll();
                 if (p != null){
 
-                    PriorityHeader header = (PriorityHeader) p;
+                    PriorityHeader header = p;
                     int rank = (int)header.getPriority();
                     // System.err.println("SPPIFO: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
 

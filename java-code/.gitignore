@@ -18,3 +18,4 @@ temp/
 venv/
 .ipynb_checkpoints/
 paths-cache/
+.mypy_cache
