@@ -58,11 +58,23 @@ public class MainFromProperties {
         populateRoutingState(initializer.getIdToNetworkDevice());
         planTraffic(runtimeNs, initializer.getIdToTransportLayer());
 
+        // Save analysis command
+        String analysisCommand = Simulator.getConfiguration().getPropertyWithDefault("analysis_command", null);
+
         // Perform run
-        System.err.println("ACTUAL RUN\n==================");
+        System.out.println("ACTUAL RUN\n==================");
         Simulator.runNs(runtimeNs, Simulator.getConfiguration().getLongPropertyWithDefault("finish_when_first_flows_finish", -1));
         Simulator.reset(false);
-        System.err.println("Finished run.\n");
+        System.out.println("Finished run.\n");
+
+        // Perform analysis
+        System.out.println("ANALYSIS\n==================");
+        if (analysisCommand != null) {
+            runCommand(analysisCommand + " " + SimulationLogger.getRunFolderFull(), true);
+            System.out.println("Finished analysis.");
+        } else {
+            System.out.println("No analysis command given; analysis is skipped.");
+        }
     }
 
     /**
