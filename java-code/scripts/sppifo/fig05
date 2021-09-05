@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-parallel --tag --line-buffer <<SIM
+parallel --line-buffer <<SIM
 # Figure 5: SP-PIFO performance (uniform rank distribution)
     # Figure 5a: Uniform 8 queues
     ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/uniform_rank_distribution/uniform_8_queues/FIFO.properties'

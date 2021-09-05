@@ -2,7 +2,7 @@
 
 NETBENCH=${NETBENCH:?must specify command line to launch NetBench}
 
-parallel --tag --line-buffer <<SIM
+parallel --line-buffer <<SIM
 # Figure 6: SP-PIFO performance (alternative distributions)
     # Figure 6a: Exponential
     ${NETBENCH} 'projects/sppifo/runs/sppifo_analysis/alternative_distributions/exponential/FIFO.properties'

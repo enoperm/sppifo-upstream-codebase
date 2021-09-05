@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Figure 8: pFabric: FCT statistics across different flow sizes in web search workload
-parallel --tag --line-buffer <<SIM
+parallel --line-buffer <<SIM
     ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/3600/DCTCP.properties'
     ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/3600/TCP.properties'
     ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/pFabric/web_search_workload/3600/PIFO.properties'

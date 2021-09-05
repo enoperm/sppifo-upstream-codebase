@@ -2,7 +2,7 @@
 
 realpath="$(dirname "$(readlink -f "${0}")")"
 
-parallel --tag --line-buffer <<SIM
+parallel --line-buffer <<SIM
     # Figure 9: Fairness: FCT statistics for all flows at different loads, over the web search workload
     ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/TCP.properties'
     ${NETBENCH} 'projects/sppifo/runs/sppifo_evaluation/fairness/web_search_workload/3600/DCTCP.properties'

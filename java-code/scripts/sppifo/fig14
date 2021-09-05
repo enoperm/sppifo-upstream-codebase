@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-parallel --tag --line-buffer <<SIM
+parallel --line-buffer <<SIM
 # Figure 14: Greedy algorithm adaptation microbenchmark
     ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/adaptation_period/Greedy_Uniform_50.properties'
     ${NETBENCH} 'projects/sppifo/runs/greedy_microbenchmark/adaptation_period/Greedy_Uniform_250.properties'
