@@ -203,7 +203,7 @@ public class SPPIFOQueue implements Queue {
                         }
 
                         if (rankSmallest < rank) {
-                            SimulationLogger.logInversionsPerRank(this.ownId, rank, 1);
+                            SimulationLogger.logInversionsPerRank(this.ownId, rank, rank - rankSmallest);
                             if(this.adaptationAlgorithm instanceof InversionTracker) {
                                 InversionTracker t = (InversionTracker)this.adaptationAlgorithm;
                                 t.inversionInQueue(i);
