@@ -23,12 +23,14 @@ public class SPPIFOQueue implements Queue {
     private ReentrantLock reentrantLock;
     private int ownId;
     private AdaptationAlgorithm adaptationAlgorithm;
+    private long packetCount;
 
     public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, AdaptationAlgorithm adaptationAlgorithm) throws Exception {
         this.queueList = new ArrayList((int)numQueues);
         this.reentrantLock = new ReentrantLock();
         this.queueBounds = new HashMap<Integer, Integer>();
         this.adaptationAlgorithm = adaptationAlgorithm;
+        this.packetCount = 0;
 
         ArrayBlockingQueue<Object> fifo;
         for (int i = 0; i < numQueues; i++){
@@ -203,7 +205,7 @@ public class SPPIFOQueue implements Queue {
                         }
 
                         if (rankSmallest < rank) {
-                            SimulationLogger.logInversionsPerRank(this.ownId, rank, rank - rankSmallest);
+                            SimulationLogger.logInversionsPerRank(this.ownId, rank, rank - rankSmallest, this.packetCount);
                             if(this.adaptationAlgorithm instanceof InversionTracker) {
                                 InversionTracker t = (InversionTracker)this.adaptationAlgorithm;
                                 t.inversionInQueue(i);
@@ -218,6 +220,7 @@ public class SPPIFOQueue implements Queue {
         } catch (Exception e){
             return null;
         } finally {
+            this.packetCount += 1;
             this.reentrantLock.unlock();
         }
     }
