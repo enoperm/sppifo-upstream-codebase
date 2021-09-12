@@ -13,107 +13,89 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
         public int rank;
     }
 
-    private Map<Integer, Long> inversionCounts;
-    private double[] previousDelta;
+    private Map<Integer, Double> inversionCounts;
     private long samplingInterval;
     private long packetCounter;
     private double alpha;
     private double sensitivity;
-    private int maxRank;
+    private int perceivedMaxRank;
 
     public SpringAdaptationAlgorithm(NBProperties settings) {
         this.alpha = settings.getDoublePropertyOrFail("spring_alpha");
         this.sensitivity = settings.getDoublePropertyOrFail("spring_sensitivity");
         this.samplingInterval = settings.getLongPropertyOrFail("spring_sample_interval"); 
-        this.maxRank = settings.getIntegerPropertyOrFail("transport_layer_rank_bound");
-        this.rotateStats(null);
-    }
-
-    private void rotateStats(double[] delta) {
-        this.inversionCounts = new HashMap<Integer, Long>();
+        this.perceivedMaxRank = 0;
+        this.inversionCounts = new HashMap<Integer, Double>();
         this.packetCounter = 0;
-        this.previousDelta = delta;
     }
 
     private double scalingFactor(int numQueues) {
-        // TODO: for now, I hardcoded maxrank at 100
-        // because that seems to be the behaviour of the packet generator,
-        // but this does not seem to have been explicitly configured in the measurement config.
         return
-            (this.sensitivity * 100) /
+            (this.sensitivity * this.perceivedMaxRank) /
             (this.samplingInterval * (double)numQueues);
     }
 
     @Override
     public Map<Integer, Integer> nextBounds(Map<Integer, Integer> currentBounds, int destinationIndex, int rank) {
         ++this.packetCounter;
+        if(this.perceivedMaxRank < rank) this.perceivedMaxRank = rank;
         if(this.packetCounter < samplingInterval) return currentBounds;
 
-        int[] next = new int[currentBounds.size()];
+        // this may be zero in the current implementation,
+        // but only if all observed packets had a rank of zero,
+        // in which case a single queue does a perfect job,
+        // so it is not a problem if bounds do not change.
+        double scale = this.scalingFactor(currentBounds.size());
 
+        double[] next = new double[currentBounds.size()];
         for(int i = 0; i < next.length; ++i) {
-            next[i] = currentBounds.get(i);
+            next[i] = (double)currentBounds.get(i);
         }
 
-        // allocating space for an additional force,
-        // to avoid having to special-case the first bound that should not move.
-        double[] delta = new double[next.length + 2];
-        for(int i = 0; i < delta.length - 2; ++i) {
-            delta[i + 1] = this.inversionCounts.getOrDefault(i, 0L) * this.alpha;
-        }
-
-        if(this.previousDelta != null) {
-            for(int i = 0; i < delta.length - 2; ++i) {
-                delta[i + 1] += this.inversionCounts.getOrDefault(i, 0L) * (1 - this.alpha);
-            }
-            // duplicate edges to represent the borders of the rank space
-            delta[0] = delta[1];
-        }
-
-        double scale = this.scalingFactor(next.length);
-        double[] forces = new double[delta.length - 1];
-
+        double[] forces = new double[next.length];
         for(int i = 0; i < forces.length; ++i) {
-            forces[i] = (delta[i + 1] - delta[i]) * scale;
+            forces[i] = this.inversionCounts.getOrDefault(i, 0.0);
         }
 
-        for(int i = 0; i < next.length; ++i) {
-            next[i] = (int)Math.round(
-                Math.min((double)this.maxRank, Math.max(next[i] + forces[i], 1.0))
-            );
+        // in this version, bounds do not push around each other.
+        double limit = Math.min(this.perceivedMaxRank, next[next.length - 1]);
+        for(int i = 1; i < forces.length; ++i) {
+            double delta = forces[i] - forces[i - 1];
+            delta *= scale;
+            double currentLimit = limit;
+            if(i < forces.length - 1) currentLimit = Math.min(currentLimit, next[i + 1]);
+            next[i] = Math.min(currentLimit, Math.max(next[i - 1], next[i] + delta));
         }
 
-        // put bounds in order and convert to return type.
-        // TODO: change return type.
-        Arrays.sort(next);
         Map<Integer, Integer> nextMapping = new HashMap<Integer, Integer>();
         for(int i = 0; i < next.length; ++i) {
-            nextMapping.put(i, next[i]);
+            nextMapping.put(i, (int)Math.round(next[i]));
         }
 
-        rotateStats(delta);
+        // forget about some inversions
+        double retainRatio = 1 - this.alpha;
+        for(Map.Entry<Integer, Double> entry: this.inversionCounts.entrySet()) {
+            this.inversionCounts.put(entry.getKey(), entry.getValue() * retainRatio);
+            this.packetCounter = 0;
+        }
 
         return nextMapping;
     }
 
     @Override
     public void inversionInQueue(int queueIndex) {
-        this.inversionCounts.put(queueIndex, this.inversionCounts.getOrDefault(queueIndex, 0L) + 1);
+        this.inversionCounts.put(queueIndex, this.inversionCounts.getOrDefault(queueIndex, 0.0) + 1);
     }
-
 
     @Override
     public void initBounds(Map<Integer, Integer> destination, int perQueueCapacity) {
-        // TODO: factor out uniform init to be able to swap initialization algorithms as well.
         int numQueues = destination.size();
-        // ranks start at zero, LstfTcpSocket may generate up to and including maxRank,
-        // thus there are maxRank + 1 possible ranks.
-        int numRanks = this.maxRank + 1;
 
-        double queueWidth = numQueues / (double)numRanks;
         for(Map.Entry<Integer, Integer> entry: destination.entrySet()) {
+            // initialize bounds to first n ranks.
+            // algorithm should adapt to arbitrary ranks later on.
             int queueIndex = entry.getKey();
-            destination.put(queueIndex, (int)Math.round(queueIndex * queueWidth));
+            destination.put(queueIndex, queueIndex);
         }
     }
 }
