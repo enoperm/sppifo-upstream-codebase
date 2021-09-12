@@ -305,6 +305,15 @@ public class SimulationLogger {
         }
     }
 
+    public static void logInversionsPerRank(int id, int rank, long inversion, long t) {
+        String record = String.format("%d,%d,%d,%d\n", id, rank, inversion, t);
+        try {
+            writerInversionsTracking.write(record);
+        } catch (IOException e) {
+            throw new LogFailureException(e);
+        }
+    }
+
     public static void logInversionsPerRank(int id, int rank, long inversion) {
         try {
             writerInversionsTracking.write(id + "," + rank + "," + inversion + "\n");
