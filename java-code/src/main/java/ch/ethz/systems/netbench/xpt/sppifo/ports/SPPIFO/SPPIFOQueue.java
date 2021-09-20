@@ -74,6 +74,7 @@ public class SPPIFOQueue implements Queue {
                         int idx = entry.getKey();
                         int bound = entry.getValue();
 
+                        System.err.println(String.format("iface %d queue %d bound %d", this.ownId, idx, bound));
                         this.queueBounds.put(idx, bound);
                     }
                     return true;
@@ -185,21 +186,22 @@ public class SPPIFOQueue implements Queue {
 
                     if(SimulationLogger.hasQueueBoundTrackingEnabled()){
                         for (int c=queueList.size()-1; c>=0; c--){
-                            SimulationLogger.logQueueBound(this.ownId, c, queueBounds.get(c));
+                            SimulationLogger.logQueueBound(this.ownId, c, this.queueBounds.get(c));
                         }
                     }
 
                     // Check whether there is an inversion: a packet with smaller rank in queue than the one polled
                     if (SimulationLogger.hasInversionsTrackingEnabled()) {
                         int rankSmallest = 1000;
-                        int i = 0;
-                        for (; i <= queueList.size() - 1; i++) {
+                        int rankQueue = 0;
+                        for (int i = 0; i <= queueList.size() - 1; i++) {
                             Object[] currentQueue = queueList.get(i).toArray();
                             if (currentQueue.length > 0) {
                                 Arrays.sort(currentQueue);
                                 FullExtTcpPacket currentMin = (FullExtTcpPacket) currentQueue[0];
                                 if ((int)currentMin.getPriority() < rankSmallest){
                                     rankSmallest = (int) currentMin.getPriority();
+                                    rankQueue = i;
                                 }
                             }
                         }
@@ -208,7 +210,7 @@ public class SPPIFOQueue implements Queue {
                             SimulationLogger.logInversionsPerRank(this.ownId, rank, rank - rankSmallest, this.packetCount);
                             if(this.adaptationAlgorithm instanceof InversionTracker) {
                                 InversionTracker t = (InversionTracker)this.adaptationAlgorithm;
-                                t.inversionInQueue(i);
+                                t.inversionInQueue(rankQueue);
                             }
                         }
                     }

@@ -99,7 +99,7 @@ public class BaseAllowedProperties {
                 // SP-PIFO spring heuristic
                 "spring_alpha",
                 "spring_sensitivity",
-                "spring_sample_interval",
+                "spring_sample_mode",
 
 
             // TCP

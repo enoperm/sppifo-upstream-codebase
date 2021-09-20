@@ -6,6 +6,10 @@ import java.util.*;
 import java.util.function.*;
 
 public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, InversionTracker, BoundsInitializationAlgorithm {
+    private enum SamplingMode {
+        COUNT_INVERSIONS, COUNT_PACKETS
+    }
+
     private class CostFunctionInput {
         public int bound;
         public int cost;
@@ -14,8 +18,8 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
     }
 
     private Map<Integer, Double> inversionCounts;
-    private long samplingInterval;
-    private long packetCounter;
+    private Map<Integer, Double> packetCounts;
+    private SamplingMode samplingMode;
     private double alpha;
     private double sensitivity;
     private int perceivedMaxRank;
@@ -23,23 +27,36 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
     public SpringAdaptationAlgorithm(NBProperties settings) {
         this.alpha = settings.getDoublePropertyOrFail("spring_alpha");
         this.sensitivity = settings.getDoublePropertyOrFail("spring_sensitivity");
-        this.samplingInterval = settings.getLongPropertyOrFail("spring_sample_interval"); 
+        this.samplingMode = SamplingMode.valueOf(settings.getPropertyOrFail("spring_sample_mode"));
         this.perceivedMaxRank = 0;
         this.inversionCounts = new HashMap<Integer, Double>();
-        this.packetCounter = 0;
+        this.packetCounts = new HashMap<Integer, Double>();
     }
 
     private double scalingFactor(int numQueues) {
         return
             (this.sensitivity * this.perceivedMaxRank) /
-            (this.samplingInterval * (double)numQueues);
+            numQueues
+        ;
+    }
+
+    private Map<Integer, Double> getBozonCounts() {
+        switch(this.samplingMode) {
+        case COUNT_INVERSIONS:
+            return this.inversionCounts;
+
+        case COUNT_PACKETS:
+            return this.packetCounts;
+
+        default:
+            throw new RuntimeException("unreachable");
+        }
     }
 
     @Override
     public Map<Integer, Integer> nextBounds(Map<Integer, Integer> currentBounds, int destinationIndex, int rank) {
-        ++this.packetCounter;
         if(this.perceivedMaxRank < rank) this.perceivedMaxRank = rank;
-        if(this.packetCounter < samplingInterval) return currentBounds;
+        this.packetCounts.put(destinationIndex, this.packetCounts.getOrDefault(destinationIndex, 0.0) + 1);
 
         // this may be zero in the current implementation,
         // but only if all observed packets had a rank of zero,
@@ -53,18 +70,21 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
         }
 
         double[] forces = new double[next.length];
+        Map<Integer, Double> bozonCounts = this.getBozonCounts();
         for(int i = 0; i < forces.length; ++i) {
-            forces[i] = this.inversionCounts.getOrDefault(i, 0.0);
+            double recorded = bozonCounts.getOrDefault(i, 0.0);
+            forces[i] = recorded;
         }
 
         // in this version, bounds do not push around each other.
-        double limit = Math.min(this.perceivedMaxRank, next[next.length - 1]);
+        double limit = this.perceivedMaxRank;
         for(int i = 1; i < forces.length; ++i) {
             double delta = forces[i] - forces[i - 1];
             delta *= scale;
             double currentLimit = limit;
-            if(i < forces.length - 1) currentLimit = Math.min(currentLimit, next[i + 1]);
-            next[i] = Math.min(currentLimit, Math.max(next[i - 1], next[i] + delta));
+            if(i < forces.length - 1) currentLimit = Math.min(currentLimit, next[i + 1] - 1);
+            next[i] = Math.max(next[i - 1] + 1, next[i] + delta);
+            next[i] = Math.min(currentLimit, next[i]);
         }
 
         Map<Integer, Integer> nextMapping = new HashMap<Integer, Integer>();
@@ -72,11 +92,10 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
             nextMapping.put(i, (int)Math.round(next[i]));
         }
 
-        // forget about some inversions
+        // forget about some force-carrying particles
         double retainRatio = 1 - this.alpha;
-        for(Map.Entry<Integer, Double> entry: this.inversionCounts.entrySet()) {
-            this.inversionCounts.put(entry.getKey(), entry.getValue() * retainRatio);
-            this.packetCounter = 0;
+        for(Map.Entry<Integer, Double> entry: bozonCounts.entrySet()) {
+            bozonCounts.put(entry.getKey(), entry.getValue() * retainRatio);
         }
 
         return nextMapping;
@@ -84,7 +103,8 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
 
     @Override
     public void inversionInQueue(int queueIndex) {
-        this.inversionCounts.put(queueIndex, this.inversionCounts.getOrDefault(queueIndex, 0.0) + 1);
+        double recorded = this.inversionCounts.getOrDefault(queueIndex, 0.0);
+        this.inversionCounts.put(queueIndex, recorded + 1);
     }
 
     @Override
