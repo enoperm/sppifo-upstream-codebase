@@ -74,7 +74,6 @@ public class SPPIFOQueue implements Queue {
                         int idx = entry.getKey();
                         int bound = entry.getValue();
 
-                        System.err.println(String.format("iface %d queue %d bound %d", this.ownId, idx, bound));
                         this.queueBounds.put(idx, bound);
                     }
                     return true;
