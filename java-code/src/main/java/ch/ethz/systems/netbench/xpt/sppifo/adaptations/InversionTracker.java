@@ -4,5 +4,5 @@ import java.util.*;
 import java.util.function.*;
 
 public interface InversionTracker {
-    void inversionInQueue(int queueIndex);
+    void inversionInQueue(int queueIndex, int magnitude);
 }

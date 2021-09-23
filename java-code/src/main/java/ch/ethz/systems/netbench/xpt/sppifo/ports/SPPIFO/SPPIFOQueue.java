@@ -209,7 +209,7 @@ public class SPPIFOQueue implements Queue {
                             SimulationLogger.logInversionsPerRank(this.ownId, rank, rank - rankSmallest, this.packetCount);
                             if(this.adaptationAlgorithm instanceof InversionTracker) {
                                 InversionTracker t = (InversionTracker)this.adaptationAlgorithm;
-                                t.inversionInQueue(rankQueue);
+                                t.inversionInQueue(rankQueue, rank - rankSmallest);
                             }
                         }
                     }

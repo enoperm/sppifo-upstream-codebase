@@ -7,7 +7,7 @@ import java.util.function.*;
 
 public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, InversionTracker, BoundsInitializationAlgorithm {
     private enum SamplingMode {
-        COUNT_INVERSIONS, COUNT_PACKETS
+        COUNT_INVERSIONS, COUNT_PACKETS, SUM_RANKS, SUM_INVERSION_MAGNITUDES
     }
 
     private class CostFunctionInput {
@@ -18,7 +18,10 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
     }
 
     private Map<Integer, Double> inversionCounts;
+    private Map<Integer, Double> inversionMagnitudes;
     private Map<Integer, Double> packetCounts;
+    private Map<Integer, Double> rankSums;
+
     private SamplingMode samplingMode;
     private double alpha;
     private double sensitivity;
@@ -31,6 +34,8 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
         this.perceivedMaxRank = 0;
         this.inversionCounts = new HashMap<Integer, Double>();
         this.packetCounts = new HashMap<Integer, Double>();
+        this.inversionMagnitudes = new HashMap<Integer, Double>();
+        this.rankSums = new HashMap<Integer, Double>();
     }
 
     private double scalingFactor(int numQueues) {
@@ -48,6 +53,12 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
         case COUNT_PACKETS:
             return this.packetCounts;
 
+        case SUM_INVERSION_MAGNITUDES:
+            return this.inversionMagnitudes;
+
+        case SUM_RANKS:
+            return this.rankSums;
+
         default:
             throw new RuntimeException("unreachable");
         }
@@ -57,6 +68,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
     public Map<Integer, Integer> nextBounds(Map<Integer, Integer> currentBounds, int destinationIndex, int rank) {
         if(this.perceivedMaxRank < rank) this.perceivedMaxRank = rank;
         this.packetCounts.put(destinationIndex, this.packetCounts.getOrDefault(destinationIndex, 0.0) + 1);
+        this.packetCounts.put(destinationIndex, this.rankSums.getOrDefault(destinationIndex, 0.0) + rank);
 
         // this may be zero in the current implementation,
         // but only if all observed packets had a rank of zero,
@@ -102,9 +114,11 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
     }
 
     @Override
-    public void inversionInQueue(int queueIndex) {
-        double recorded = this.inversionCounts.getOrDefault(queueIndex, 0.0);
-        this.inversionCounts.put(queueIndex, recorded + 1);
+    public void inversionInQueue(int queueIndex, int inversionMagnitude) {
+        double count = this.inversionCounts.getOrDefault(queueIndex, 0.0);
+        double magnitude = this.inversionMagnitudes.getOrDefault(queueIndex, 0.0);
+        this.inversionCounts.put(queueIndex, count + 1);
+        this.inversionMagnitudes.put(queueIndex, inversionMagnitude + magnitude);
     }
 
     @Override
