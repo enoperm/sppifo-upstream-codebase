@@ -15,6 +15,7 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
     private final long sizePerQueuePackets;
     private final String stepSize;
     private final NBProperties settings;
+    private final long queueboundTrackingInterval;
 
     // TODO: these should take an NBConfiguration instead,
     // so as to make configuration more flexible
@@ -24,6 +25,7 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
         this.numberQueues = settings.getLongPropertyOrFail("output_port_number_queues");
         this.sizePerQueuePackets = settings.getLongPropertyOrFail("output_port_max_size_per_queue_packets");
         this.stepSize = settings.getPropertyOrFail("output_port_step_size");
+        this.queueboundTrackingInterval = settings.getLongPropertyWithDefault("sppifo_queuebound_log_interval", 1);
         SimulationLogger.logInfo("Port", "SPPIFO(numberQueues=" + numberQueues + ", sizePerQueuePackets=" + sizePerQueuePackets +
                 ", stepSize=" + stepSize + ")");
     }
@@ -53,7 +55,7 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
         return new SPPIFOOutputPort(
             ownNetworkDevice, towardsNetworkDevice,
             link, numberQueues, sizePerQueuePackets,
-            adaptationAlgorithm
+            adaptationAlgorithm, queueboundTrackingInterval
         );
     }
 

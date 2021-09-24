@@ -10,8 +10,8 @@ import ch.ethz.systems.netbench.core.network.Packet;
 
 public class SPPIFOOutputPort extends OutputPort {
 
-    public SPPIFOOutputPort(NetworkDevice ownNetworkDevice, NetworkDevice targetNetworkDevice, Link link, long numberQueues, long sizePerQueuePackets, AdaptationAlgorithm adaptationAlgorithm) throws Exception {
-        super(ownNetworkDevice, targetNetworkDevice, link, new SPPIFOQueue(numberQueues, sizePerQueuePackets, ownNetworkDevice, adaptationAlgorithm));
+    public SPPIFOOutputPort(NetworkDevice ownNetworkDevice, NetworkDevice targetNetworkDevice, Link link, long numberQueues, long sizePerQueuePackets, AdaptationAlgorithm adaptationAlgorithm, long queueboundTrackingInterval) throws Exception {
+        super(ownNetworkDevice, targetNetworkDevice, link, new SPPIFOQueue(numberQueues, sizePerQueuePackets, ownNetworkDevice, adaptationAlgorithm, queueboundTrackingInterval));
     }
 
     /**

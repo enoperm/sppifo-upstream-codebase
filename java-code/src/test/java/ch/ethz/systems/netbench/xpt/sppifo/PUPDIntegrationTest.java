@@ -160,7 +160,7 @@ public class PUPDIntegrationTest {
     }
 
     private SPPIFOQueue getTestUnit(String pushdownBehaviour) throws Exception {
-        return new SPPIFOQueue(2, 10, this.networkDevice, new PUPD(pushdownBehaviour));
+        return new SPPIFOQueue(2, 10, this.networkDevice, new PUPD(pushdownBehaviour), 1);
     }
 
     private List<Map<Integer, Integer>> feedTestSequence(SPPIFOQueue q) {

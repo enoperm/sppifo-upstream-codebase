@@ -24,13 +24,15 @@ public class SPPIFOQueue implements Queue {
     private int ownId;
     private AdaptationAlgorithm adaptationAlgorithm;
     private long packetCount;
+    private long queueboundTrackingInterval;
 
-    public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, AdaptationAlgorithm adaptationAlgorithm) throws Exception {
+    public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, AdaptationAlgorithm adaptationAlgorithm, long queueboundTrackingInterval) throws Exception {
         this.queueList = new ArrayList((int)numQueues);
         this.reentrantLock = new ReentrantLock();
         this.queueBounds = new HashMap<Integer, Integer>();
         this.adaptationAlgorithm = adaptationAlgorithm;
         this.packetCount = 0;
+        this.queueboundTrackingInterval = queueboundTrackingInterval;
 
         ArrayBlockingQueue<Object> fifo;
         for (int i = 0; i < numQueues; i++){
@@ -183,7 +185,8 @@ public class SPPIFOQueue implements Queue {
                         SimulationLogger.logRankMapping(this.ownId, rank, q);
                     }
 
-                    if(SimulationLogger.hasQueueBoundTrackingEnabled()){
+                    boolean shouldLogQueueBound = (packetCount % this.queueboundTrackingInterval) == 0;
+                    if(shouldLogQueueBound && SimulationLogger.hasQueueBoundTrackingEnabled()) {
                         for (int c=queueList.size()-1; c>=0; c--){
                             SimulationLogger.logQueueBound(this.ownId, c, this.queueBounds.get(c));
                         }
