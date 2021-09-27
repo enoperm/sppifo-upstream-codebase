@@ -83,6 +83,13 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
 
         double[] forces = new double[next.length];
         Map<Integer, Double> bozonCounts = this.getBozonCounts();
+
+        // forget about some force-carrying particles
+        double retainRatio = 1 - this.alpha;
+        for(Map.Entry<Integer, Double> entry: bozonCounts.entrySet()) {
+            bozonCounts.put(entry.getKey(), entry.getValue() * retainRatio);
+        }
+
         for(int i = 0; i < forces.length; ++i) {
             double recorded = bozonCounts.getOrDefault(i, 0.0);
             forces[i] = recorded;
@@ -102,12 +109,6 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
         Map<Integer, Integer> nextMapping = new HashMap<Integer, Integer>();
         for(int i = 0; i < next.length; ++i) {
             nextMapping.put(i, (int)Math.round(next[i]));
-        }
-
-        // forget about some force-carrying particles
-        double retainRatio = 1 - this.alpha;
-        for(Map.Entry<Integer, Double> entry: bozonCounts.entrySet()) {
-            bozonCounts.put(entry.getKey(), entry.getValue() * retainRatio);
         }
 
         return nextMapping;
