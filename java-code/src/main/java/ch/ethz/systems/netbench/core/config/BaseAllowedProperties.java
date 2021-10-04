@@ -101,6 +101,8 @@ public class BaseAllowedProperties {
                 "spring_alpha",
                 "spring_sensitivity",
                 "spring_sample_mode",
+                // SP-PIFO static bounds implementation
+                "sppifo_queue_bounds",
 
 
             // TCP

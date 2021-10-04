@@ -34,8 +34,6 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
     public OutputPort generate(NetworkDevice ownNetworkDevice, NetworkDevice towardsNetworkDevice, Link link) throws Exception {
 
         AdaptationAlgorithm adaptationAlgorithm = null;
-        // TODO: extract, SPPIFOQueue does not need to know anything about PUPD or any other adaptation algorithm,
-        // apart from knowing how to call one that it received on its constructor.
         switch(stepSize) {
         // PUPD:
         case "1":
@@ -44,14 +42,21 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
         case "queueBound":
             adaptationAlgorithm = new PUPD(stepSize);
             break;
+
         // Spring heuristic:
         case "spring":
             adaptationAlgorithm = new SpringAdaptationAlgorithm(this.settings);
             break;
 
+        // Static queue bounds:
+        case "static":
+            adaptationAlgorithm = new StaticBounds(this.settings);
+            break;
+
         default:
             throw new Exception("ERROR: SP-PIFO step size " + stepSize + " is not supported.");
         }
+
         return new SPPIFOOutputPort(
             ownNetworkDevice, towardsNetworkDevice,
             link, numberQueues, sizePerQueuePackets,
