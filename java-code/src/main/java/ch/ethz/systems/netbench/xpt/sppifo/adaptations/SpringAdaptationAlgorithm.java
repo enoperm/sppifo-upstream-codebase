@@ -126,11 +126,10 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
     public void initBounds(Map<Integer, Integer> destination, int perQueueCapacity) {
         int numQueues = destination.size();
 
-        for(Map.Entry<Integer, Integer> entry: destination.entrySet()) {
+        for(int i = 0; i < numQueues; ++i) {
             // initialize bounds to first n ranks.
             // algorithm should adapt to arbitrary ranks later on.
-            int queueIndex = entry.getKey();
-            destination.put(queueIndex, queueIndex);
+            destination.put(i, i);
         }
     }
 }
