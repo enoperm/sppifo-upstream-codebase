@@ -129,8 +129,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
         for(int i = 0; i < numQueues; ++i) {
             // initialize bounds to first n ranks.
             // algorithm should adapt to arbitrary ranks later on.
-            Integer byRef = destination.get(i);
-            byRef = i;
+            destination.put(i, i);
         }
     }
 }
