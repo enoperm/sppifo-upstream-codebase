@@ -50,6 +50,9 @@ public class SPPIFOQueue implements Queue {
             // we pass queueBounds along because it is final and we cannot reassign.
             // number of queues is same as the initial size of this map.
             bia.initBounds(this.queueBounds, (int)perQueueCapacity);
+            if(SimulationLogger.hasRankMappingEnabled()){
+                SimulationLogger.logRankMapping(this.ownId, rank, q);
+            }
         }
     }
 
