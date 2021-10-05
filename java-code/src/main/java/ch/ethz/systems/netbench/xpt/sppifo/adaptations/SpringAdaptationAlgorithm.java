@@ -96,14 +96,17 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
         }
 
         // in this version, bounds do not push around each other.
-        double limit = this.perceivedMaxRank;
         for(int i = forces.length - 1; i > 0; --i) {
             double delta = forces[i] - forces[i - 1];
             delta *= scale;
-            double currentLimit = limit;
-            if(i < forces.length - 1) currentLimit = Math.min(currentLimit, next[i + 1] - 1);
-            next[i] = Math.min(currentLimit, next[i]);
-            next[i] = Math.max(next[i - 1] + 1, next[i] + delta);
+
+            double upperLimit = this.perceivedMaxRank;
+            double lowerLimit = next[i - 1] + 1;
+            if(i < forces.length - 1) upperLimit = Math.min(upperLimit, next[i + 1] - 1);
+
+            next[i] += delta;
+            next[i] = Math.min(upperLimit, next[i]);
+            next[i] = Math.max(lowerLimit, next[i]);
         }
 
         Map<Integer, Integer> nextMapping = new HashMap<Integer, Integer>();
