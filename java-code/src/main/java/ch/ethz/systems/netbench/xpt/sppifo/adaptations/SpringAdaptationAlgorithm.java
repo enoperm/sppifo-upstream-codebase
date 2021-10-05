@@ -102,8 +102,8 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
             delta *= scale;
             double currentLimit = limit;
             if(i < forces.length - 1) currentLimit = Math.min(currentLimit, next[i + 1] - 1);
-            next[i] = Math.max(next[i - 1] + 1, next[i] + delta);
             next[i] = Math.min(currentLimit, next[i]);
+            next[i] = Math.max(next[i - 1] + 1, next[i] + delta);
         }
 
         Map<Integer, Integer> nextMapping = new HashMap<Integer, Integer>();
