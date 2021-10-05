@@ -97,7 +97,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, Inversion
 
         // in this version, bounds do not push around each other.
         double limit = this.perceivedMaxRank;
-        for(int i = 1; i < forces.length; ++i) {
+        for(int i = forces.length - 1; i >= 0; --i) {
             double delta = forces[i] - forces[i - 1];
             delta *= scale;
             double currentLimit = limit;
