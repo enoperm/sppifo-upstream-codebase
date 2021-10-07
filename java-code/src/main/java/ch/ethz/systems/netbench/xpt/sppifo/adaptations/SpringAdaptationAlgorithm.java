@@ -61,7 +61,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, BoundsIni
         // in this version, bounds do not push around each other.
         for(int i = forces.length - 1; i > 0; --i) {
             double delta = this.sensitivity * (forces[i] - forces[i - 1]);
-            this.bounds[i] = Math.min(0, this.bounds[i] + delta);
+            this.bounds[i] = Math.max(0, this.bounds[i] + delta);
         }
 
         Map<Integer, Integer> nextMapping = new HashMap<Integer, Integer>();
