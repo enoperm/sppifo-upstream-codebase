@@ -11,6 +11,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, BoundsIni
     }
 
     private double[] bounds;
+    private int perceivedMaxRank;
     private Map<Integer, Double> inversionCounts;
     private Map<Integer, Integer> lastRankByQueue;
     private Map<Integer, Double> packetCounts;
@@ -26,6 +27,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, BoundsIni
         this.inversionCounts = new HashMap<Integer, Double>();
         this.packetCounts = new HashMap<Integer, Double>();
         this.lastRankByQueue = new HashMap<Integer, Integer>();
+        this.perceivedMaxRank = Integer.MIN_VALUE;
     }
 
     private Map<Integer, Double> getBozonCounts() {
@@ -43,6 +45,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, BoundsIni
 
     @Override
     public Map<Integer, Integer> nextBounds(Map<Integer, Integer> currentBounds, int destinationIndex, int rank) {
+        if(this.perceivedMaxRank < rank) this.perceivedMaxRank = rank;
         this.packetCounts.put(destinationIndex, this.packetCounts.getOrDefault(destinationIndex, 0.0) * (1 - alpha) + alpha);
 
         boolean isInversion = this.lastRankByQueue.getOrDefault(destinationIndex, Integer.MIN_VALUE) > rank;
@@ -61,8 +64,15 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, BoundsIni
         // in this version, bounds do not push around each other.
         for(int i = forces.length - 1; i > 0; --i) {
             double delta = this.sensitivity * (forces[i] - forces[i - 1]);
-            this.bounds[i] = Math.max(0, this.bounds[i] + delta);
-            this.bounds[i] = Math.max(0, this.bounds[i] + delta);
+            // upper bound starts from perceived max rank
+            // or number of queues - 1 (ie. initial value for top bound),
+            // whichever is higher.
+            double max = Math.max(this.perceivedMaxRank, this.bounds.length - 1);
+            // if there is a queue above, make sure we do not cross or overlap it.
+            if(i < forces.length - 1) max = Math.min(max, this.bounds[i + 1] - 1);
+
+            this.bounds[i] = Math.min(max, this.bounds[i] + delta);
+            this.bounds[i] = Math.max(this.bounds[i - 1] + 1, this.bounds[i]);
         }
 
         Map<Integer, Integer> nextMapping = new HashMap<Integer, Integer>();
