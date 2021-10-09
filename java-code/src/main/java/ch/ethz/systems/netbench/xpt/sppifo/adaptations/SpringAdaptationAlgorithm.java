@@ -45,7 +45,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, BoundsIni
     public Map<Integer, Integer> nextBounds(Map<Integer, Integer> currentBounds, int destinationIndex, int rank) {
         this.packetCounts.put(destinationIndex, this.packetCounts.getOrDefault(destinationIndex, 0.0) * (1 - alpha) + alpha);
 
-        boolean isInversion = this.lastRankByQueue.getOrDefault(destinationIndex, Integer.MAX_VALUE) > rank;
+        boolean isInversion = this.lastRankByQueue.getOrDefault(destinationIndex, Integer.MIN_VALUE) > rank;
         this.inversionCounts.put(
             destinationIndex,
             this.inversionCounts.getOrDefault(destinationIndex, 0.0) * (1 - this.alpha)
@@ -61,6 +61,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, BoundsIni
         // in this version, bounds do not push around each other.
         for(int i = forces.length - 1; i > 0; --i) {
             double delta = this.sensitivity * (forces[i] - forces[i - 1]);
+            this.bounds[i] = Math.max(0, this.bounds[i] + delta);
             this.bounds[i] = Math.max(0, this.bounds[i] + delta);
         }
 
