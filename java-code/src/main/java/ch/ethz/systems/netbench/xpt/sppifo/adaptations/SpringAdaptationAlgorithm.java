@@ -49,6 +49,7 @@ public class SpringAdaptationAlgorithm implements AdaptationAlgorithm, BoundsIni
         this.packetCounts.put(destinationIndex, this.packetCounts.getOrDefault(destinationIndex, 0.0) * (1 - alpha) + alpha);
 
         boolean isInversion = this.lastRankByQueue.getOrDefault(destinationIndex, Integer.MIN_VALUE) > rank;
+        this.lastRankByQueue.put(destinationIndex, rank);
         this.inversionCounts.put(
             destinationIndex,
             this.inversionCounts.getOrDefault(destinationIndex, 0.0) * (1 - this.alpha)
