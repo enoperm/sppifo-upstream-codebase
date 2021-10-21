@@ -496,7 +496,7 @@ public class GreedyQueue_Advanced implements Queue {
                         }
 
                         if (rankSmallest < rank) {
-                            SimulationLogger.logInversionsPerRank(this.ownId, rank, 1);
+                            SimulationLogger.logInversionsPerRank(this.ownId, rank, rank - rankSmallest);
                             // System.err.println("Rank " + rank + " is blocking the transmission to " + rankSmallest);
                         }
                     }
