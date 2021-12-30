@@ -1,6 +1,7 @@
 package ch.ethz.systems.netbench.xpt.sppifo.ports.SPPIFO;
 
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.PUPD;
+import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionsTracker;
 import ch.ethz.systems.netbench.core.Simulator;
 import ch.ethz.systems.netbench.core.network.Packet;
 import ch.ethz.systems.netbench.xpt.tcpbase.PriorityHeader;
@@ -30,6 +31,9 @@ import static org.mockito.Mockito.*;
 public class PUPDIntegrationTest {
     @Mock
     private NetworkDevice networkDevice;
+
+    @Mock
+    private InversionsTracker inversionsTracker;
 
     private PriorityHeader[] testSequence = new PriorityHeader[]{
         rankedPacket(13), rankedPacket(7), rankedPacket(3)
@@ -160,7 +164,7 @@ public class PUPDIntegrationTest {
     }
 
     private SPPIFOQueue getTestUnit(String pushdownBehaviour) throws Exception {
-        return new SPPIFOQueue(2, 10, this.networkDevice, new PUPD(pushdownBehaviour), 1);
+        return new SPPIFOQueue(2, 10, this.networkDevice, new PUPD(pushdownBehaviour), 1, this.inversionsTracker);
     }
 
     private List<Map<Integer, Integer>> feedTestSequence(SPPIFOQueue q) {

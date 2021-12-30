@@ -2,6 +2,7 @@ package ch.ethz.systems.netbench.xpt.sppifo.ports.SPPIFO;
 
 import ch.ethz.systems.netbench.core.config.NBProperties;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.*;
+import ch.ethz.systems.netbench.xpt.sppifo.utility.*;
 
 import ch.ethz.systems.netbench.core.log.SimulationLogger;
 import ch.ethz.systems.netbench.core.network.Link;
@@ -13,9 +14,10 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
 
     private final long numberQueues;
     private final long sizePerQueuePackets;
-    private final String stepSize;
-    private final NBProperties settings;
     private final long queueboundTrackingInterval;
+    private final String stepSize;
+    private final String inversionModel;
+    private final NBProperties settings;
 
     // TODO: these should take an NBConfiguration instead,
     // so as to make configuration more flexible
@@ -26,8 +28,45 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
         this.sizePerQueuePackets = settings.getLongPropertyOrFail("output_port_max_size_per_queue_packets");
         this.stepSize = settings.getPropertyOrFail("output_port_step_size");
         this.queueboundTrackingInterval = settings.getLongPropertyWithDefault("sppifo_queuebound_log_interval", 1);
-        SimulationLogger.logInfo("Port", "SPPIFO(numberQueues=" + numberQueues + ", sizePerQueuePackets=" + sizePerQueuePackets +
-                ", stepSize=" + stepSize + ")");
+
+        this.inversionModel = settings.getPropertyOrFail("sppifo_inversion_model");
+        if(SimulationLogger.hasInversionsTrackingEnabled()) {
+            this.validateInversionModel();
+        }
+
+        SimulationLogger.logInfo(
+            "Port",
+            "SPPIFO(numberQueues=" + numberQueues +
+            ", sizePerQueuePackets=" + sizePerQueuePackets +
+            ", stepSize=" + stepSize + ")"
+        );
+    }
+
+    private void validateInversionModel() throws Exception {
+        switch(this.inversionModel) {
+        case "INVERSIONS_ALL":
+        case "INVERSIONS_QUEUE_IMMEDIATE":
+            break;
+
+        default:
+            throw new Exception("Unsupported inversion model: " + this.inversionModel);
+        }
+    }
+
+    private InversionsTracker newInversionsTracker() throws Exception {
+        if(!SimulationLogger.hasInversionsTrackingEnabled()) {
+            return new NoopInversionsTracker();
+        }
+
+        switch(this.inversionModel) {
+        case "INVERSIONS_ALL":
+            return new AllInversionsTracker(SimulationLogger.getGlobalInversionsLogger());
+        case "INVERSIONS_QUEUE_IMMEDIATE":
+            return new ImmediateInversionsTracker(SimulationLogger.getGlobalInversionsLogger());
+
+        default:
+            throw new Exception("Unsupported inversion model: " + this.inversionModel);
+        }
     }
 
     @Override
@@ -60,7 +99,8 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
         return new SPPIFOOutputPort(
             ownNetworkDevice, towardsNetworkDevice,
             link, numberQueues, sizePerQueuePackets,
-            adaptationAlgorithm, queueboundTrackingInterval
+            adaptationAlgorithm, queueboundTrackingInterval,
+            newInversionsTracker()
         );
     }
 

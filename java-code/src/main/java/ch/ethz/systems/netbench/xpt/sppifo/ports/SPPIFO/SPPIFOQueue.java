@@ -10,8 +10,11 @@ import ch.ethz.systems.netbench.core.log.SimulationLogger;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.AdaptationAlgorithm;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.BoundsInitializationAlgorithm;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.InversionTracker;
+import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionsTracker;
+import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionInformation;
 
 import java.util.*;
+import java.util.stream.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -20,19 +23,21 @@ public class SPPIFOQueue implements Queue {
 
     private final ArrayList<ArrayBlockingQueue<Object>> queueList;
     private final Map<Integer, Integer> queueBounds;
+    private final InversionsTracker inversionsTracker;
     private ReentrantLock reentrantLock;
     private int ownId;
     private AdaptationAlgorithm adaptationAlgorithm;
     private long packetCount;
     private long queueboundTrackingInterval;
 
-    public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, AdaptationAlgorithm adaptationAlgorithm, long queueboundTrackingInterval) throws Exception {
+    public SPPIFOQueue(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, AdaptationAlgorithm adaptationAlgorithm, long queueboundTrackingInterval, InversionsTracker inversionsTracker) throws Exception {
         this.queueList = new ArrayList((int)numQueues);
         this.reentrantLock = new ReentrantLock();
         this.queueBounds = new HashMap<Integer, Integer>();
         this.adaptationAlgorithm = adaptationAlgorithm;
         this.packetCount = 0;
         this.queueboundTrackingInterval = queueboundTrackingInterval;
+        this.inversionsTracker = inversionsTracker;
 
         ArrayBlockingQueue<Object> fifo;
         for (int i = 0; i < numQueues; i++){
@@ -179,8 +184,7 @@ public class SPPIFOQueue implements Queue {
             PriorityHeader p;
             for (int q=0; q<queueList.size(); q++){
                 p = (PriorityHeader) queueList.get(q).poll();
-                if (p != null){
-
+                if (p != null) {
                     PriorityHeader header = p;
                     int rank = (int)header.getPriority();
                     // System.err.println("SPPIFO: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
@@ -197,28 +201,24 @@ public class SPPIFOQueue implements Queue {
                         }
                     }
 
-                    // Check whether there is an inversion: a packet with smaller rank in queue than the one polled
-                    if (SimulationLogger.hasInversionsTrackingEnabled()) {
-                        int rankSmallest = 1000;
-                        int rankQueue = 0;
-                        for (int i = 0; i <= queueList.size() - 1; i++) {
-                            Object[] currentQueue = queueList.get(i).toArray();
-                            if (currentQueue.length > 0) {
-                                Arrays.sort(currentQueue);
-                                FullExtTcpPacket currentMin = (FullExtTcpPacket) currentQueue[0];
-                                if ((int)currentMin.getPriority() < rankSmallest){
-                                    rankSmallest = (int) currentMin.getPriority();
-                                    rankQueue = i;
-                                }
-                            }
+                    int[][] queuedRanks = new int[queueList.size()][];
+                    for(int i = 0; i < queueList.size(); ++i) {
+                        Object[] waiting = queueList.get(i).toArray();
+                        queuedRanks[i] = new int[waiting.length];
+                        for(int j = 0; j < waiting.length; ++j) {
+                            queuedRanks[i][j] = (int)((PriorityHeader)waiting[j]).getPriority();
                         }
+                    }
 
-                        if (rankSmallest < rank) {
-                            SimulationLogger.logInversionsPerRank(this.ownId, rank, rank - rankSmallest, this.packetCount);
-                            if(this.adaptationAlgorithm instanceof InversionTracker) {
-                                InversionTracker t = (InversionTracker)this.adaptationAlgorithm;
-                                t.inversionInQueue(rankQueue, rank - rankSmallest);
-                            }
+                    // Check whether there is an inversion: a packet with smaller rank in queue than the one polled
+                    InversionInformation ii = this.inversionsTracker.process(this.ownId, this.packetCount, queuedRanks, rank, q);
+                    if(ii != null) {
+                        // TODO: rename InversionTracker to avoid confusion,
+                        // this interface is for adaptation algorithms to optionally implement,
+                        // if they use inversions as an input.
+                        if(this.adaptationAlgorithm instanceof InversionTracker) {
+                            InversionTracker t = (InversionTracker)this.adaptationAlgorithm;
+                            t.inversionInQueue(ii.lowerQueue, ii.higher - ii.lower);
                         }
                     }
 
@@ -227,6 +227,7 @@ public class SPPIFOQueue implements Queue {
             }
             return null;
         } catch (Exception e){
+            e.printStackTrace(System.err);
             return null;
         } finally {
             this.packetCount += 1;
