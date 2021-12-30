@@ -53,22 +53,6 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
         }
     }
 
-    private InversionsTracker newInversionsTracker() throws Exception {
-        if(!SimulationLogger.hasInversionsTrackingEnabled()) {
-            return new NoopInversionsTracker();
-        }
-
-        switch(this.inversionModel) {
-        case "INVERSIONS_ALL":
-            return new AllInversionsTracker(SimulationLogger.getGlobalInversionsLogger());
-        case "INVERSIONS_QUEUE_IMMEDIATE":
-            return new ImmediateInversionsTracker(SimulationLogger.getGlobalInversionsLogger());
-
-        default:
-            throw new Exception("Unsupported inversion model: " + this.inversionModel);
-        }
-    }
-
     @Override
     public OutputPort generate(NetworkDevice ownNetworkDevice, NetworkDevice towardsNetworkDevice, Link link) throws Exception {
 
@@ -100,7 +84,7 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
             ownNetworkDevice, towardsNetworkDevice,
             link, numberQueues, sizePerQueuePackets,
             adaptationAlgorithm, queueboundTrackingInterval,
-            newInversionsTracker()
+            InversionsTrackerFactory.newInversionsTracker(this.inversionModel)
         );
     }
 
