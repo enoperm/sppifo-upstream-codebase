@@ -103,6 +103,8 @@ public class BaseAllowedProperties {
                 "spring_sample_mode",
                 // SP-PIFO static bounds implementation
                 "sppifo_queue_bounds",
+                // SP-PIFO pluggable inversion models implementation
+                "sppifo_inversion_model",
 
 
             // TCP

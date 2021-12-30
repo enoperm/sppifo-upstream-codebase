@@ -1,8 +1,12 @@
 package ch.ethz.systems.netbench.core.log;
 
+import ch.ethz.systems.netbench.core.log.Logger;
+import ch.ethz.systems.netbench.core.log.WriterLogger;
+
 import ch.ethz.systems.netbench.core.Simulator;
 import ch.ethz.systems.netbench.core.config.NBProperties;
 import ch.ethz.systems.netbench.core.run.MainFromProperties;
+
 import org.apache.commons.io.output.TeeOutputStream;
 
 import java.io.*;
@@ -303,6 +307,12 @@ public class SimulationLogger {
         } catch (IOException e) {
             throw new LogFailureException(e);
         }
+    }
+
+    // TODO: Eliminate ALL the static things.
+    // They are not good for one's health.
+    public static Logger getGlobalInversionsLogger() {
+        return new WriterLogger(writerInversionsTracking);
     }
 
     public static void logInversionsPerRank(int id, int rank, long inversion, long t) {
