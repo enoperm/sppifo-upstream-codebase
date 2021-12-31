@@ -108,9 +108,13 @@ public class InversionsTrackingTest {
         OutputStreamWriter writer = writerOf(sink); 
 
         InversionsTracker it = getImmediateTracker(writer);
+        InversionInformation ii;
 
-        it.process(1, 0, null, 1, 0);
-        it.process(1, 1, null, 0, 1);
+        ii = it.process(1, 0, new int[][]{
+            new int[]{},
+            new int[]{0}
+        }, 1, 0);
+        assertEquals(null, ii);
 
         writer.flush();
 
@@ -125,10 +129,10 @@ public class InversionsTrackingTest {
         InversionsTracker it = getImmediateTracker(writer);
         InversionInformation ii = null;
 
-        ii = it.process(1, 0, null, 1, 0);
-        assertEquals(null, ii);
-
-        ii = it.process(1, 1, null, 0, 0);
+        ii = it.process(1, 0, new int[][]{
+            new int[]{0},
+            new int[]{}
+        }, 1, 0);
 
         writer.flush();
 
@@ -137,20 +141,26 @@ public class InversionsTrackingTest {
         assertEquals(0, ii.lower);
         assertEquals(8, sink.size());
 
-        ii = it.process(1, 2, null, 1, 0);
+        ii = it.process(1, 1, new int[][]{
+            new int[]{1},
+            new int[]{}
+        }, 0, 0);
         assertEquals(null, ii);
 
-        ii = it.process(1, 3, null, 0, 0);
+        ii = it.process(1, 3, new int[][]{
+            new int[]{1},
+            new int[]{}
+        }, 5, 0);
         assertNotNull(ii);
-        assertEquals(1, ii.higher);
-        assertEquals(0, ii.lower);
+        assertEquals(5, ii.higher);
+        assertEquals(1, ii.lower);
 
         writer.flush();
 
         assertEquals(16, sink.size());
         assertEquals(
-            "1,1,1,1\n" +
-            "1,1,1,3\n",
+            "1,1,1,0\n" +
+            "1,5,4,3\n",
 
             sink.toString()
         );

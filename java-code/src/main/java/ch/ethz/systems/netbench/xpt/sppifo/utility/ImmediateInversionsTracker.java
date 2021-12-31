@@ -10,36 +10,25 @@ import java.io.IOException;
 
 public class ImmediateInversionsTracker implements InversionsTracker {
     private Logger logger;
-    private Map<Integer, Map<Integer, Integer>> lastObservedFromInterfaceAndQueue;
 
     public ImmediateInversionsTracker(Logger logger) {
         if(logger == null) throw new NullPointerException();
         this.logger = logger;
-        this.lastObservedFromInterfaceAndQueue = new HashMap<Integer, Map<Integer, Integer>>();
-    }
-
-    public Map<Integer, Integer> mapForNewInterface() {
-        return new HashMap<Integer, Integer>();
     }
 
     @Override
     public InversionInformation process(int interfaceId, long packetCount, int[][] queues, int emittedRank, int dequeuedFrom)
     throws IOException {
-        Map<Integer, Integer> lastObservedFromQueue = this.lastObservedFromInterfaceAndQueue.getOrDefault(interfaceId, null);
-        // avoid instantiating superflous new object with getOrDefault when value already exists.
-        if(lastObservedFromQueue == null) {
-            lastObservedFromQueue = mapForNewInterface();
-            this.lastObservedFromInterfaceAndQueue.put(interfaceId, lastObservedFromQueue);
-        }
+        int queueLength = queues[dequeuedFrom].length;
+        int nextRank = queueLength > 0
+                     ? queues[dequeuedFrom][queueLength-1]
+                     : emittedRank;
 
-        int lastRank = lastObservedFromQueue.getOrDefault(dequeuedFrom, emittedRank);
-        int cost = lastRank - emittedRank;
-
-        lastObservedFromQueue.put(dequeuedFrom, emittedRank);
+        int cost = emittedRank - nextRank;
 
         if(cost > 0) {
-            logger.emitRow(interfaceId, lastRank, cost, packetCount);
-            return new InversionInformation(lastRank, emittedRank, dequeuedFrom, dequeuedFrom);
+            logger.emitRow(interfaceId, emittedRank, cost, packetCount);
+            return new InversionInformation(emittedRank, nextRank, dequeuedFrom, dequeuedFrom);
         }
         return null;
     }
