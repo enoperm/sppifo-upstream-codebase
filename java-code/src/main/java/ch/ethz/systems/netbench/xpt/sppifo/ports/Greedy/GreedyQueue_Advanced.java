@@ -1,5 +1,8 @@
 package ch.ethz.systems.netbench.xpt.sppifo.ports.Greedy;
 
+import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionsTracker;
+import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionInformation;
+
 import ch.ethz.systems.netbench.core.log.SimulationLogger;
 import ch.ethz.systems.netbench.core.network.NetworkDevice;
 import ch.ethz.systems.netbench.core.network.Packet;
@@ -14,6 +17,7 @@ public class GreedyQueue_Advanced implements Queue {
 
     private ReentrantLock reentrantLock;
     private int ownId;
+    private final InversionsTracker inversionsTracker;
     private final ArrayList<ArrayBlockingQueue> queueList;
     private final Map queueBounds;
     private Map queueBoundsMinus;
@@ -30,13 +34,17 @@ public class GreedyQueue_Advanced implements Queue {
     private int rank_bound;
     private long unpifoness;
     private Boolean fixQueueBounds;
+    private long queueboundTrackingInterval;
 
-    public GreedyQueue_Advanced(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, String initialization, String fixQueueBounds){
+    public GreedyQueue_Advanced(long numQueues, long perQueueCapacity, NetworkDevice ownNetworkDevice, String initialization, String fixQueueBounds, InversionsTracker inversionsTracker, long queueboundTrackingInterval){
 
         // General
         this.reentrantLock = new ReentrantLock();
         this.ownId = ownNetworkDevice.getIdentifier();
         this.unpifoness = 0;
+        
+        this.inversionsTracker = inversionsTracker;
+        this.queueboundTrackingInterval = queueboundTrackingInterval;
 
         // The actual queues where packets are stored
         this.queueList = new ArrayList((int)numQueues);
@@ -477,34 +485,30 @@ public class GreedyQueue_Advanced implements Queue {
                     // System.err.println("SPPIFO: Dequeued packet with rank" + rank + ", from queue " + q + ". Queue size: " + queueList.get(q).size());
 
                     // Log rank of packet enqueued and queue selected if enabled
-                    if(SimulationLogger.hasRankMappingEnabled()){
-                        SimulationLogger.logRankMapping(this.ownId, rank, q);
+                    boolean shouldLogQueueBound = (generalPacketCounter % this.queueboundTrackingInterval) == 0;
+                    if(shouldLogQueueBound && SimulationLogger.hasQueueBoundTrackingEnabled()) {
+                        for (int c=queueList.size()-1; c>=0; c--){
+                            SimulationLogger.logQueueBound(this.ownId, c, (int)this.queueBounds.get(c));
+                        }
+                    }
+
+                    int[][] queuedRanks = new int[queueList.size()][];
+                    for(int i = 0; i < queueList.size(); ++i) {
+                        Object[] waiting = queueList.get(i).toArray();
+                        queuedRanks[i] = new int[waiting.length];
+                        for(int j = 0; j < waiting.length; ++j) {
+                            queuedRanks[i][j] = (int)((PriorityHeader)waiting[j]).getPriority();
+                        }
                     }
 
                     // Check whether there is an inversion: a packet with smaller rank in queue than the one polled
-                    if (SimulationLogger.hasInversionsTrackingEnabled()) {
-                        int rankSmallest = 1000;
-                        for (int i = 0; i <= queueList.size() - 1; i++) {
-                            Object[] currentQueue = queueList.get(i).toArray();
-                            if (currentQueue.length > 0) {
-                                Arrays.sort(currentQueue);
-                                FullExtTcpPacket currentMin = (FullExtTcpPacket) currentQueue[0];
-                                if ((int)currentMin.getPriority() < rankSmallest){
-                                    rankSmallest = (int) currentMin.getPriority();
-                                }
-                            }
-                        }
-
-                        if (rankSmallest < rank) {
-                            SimulationLogger.logInversionsPerRank(this.ownId, rank, rank - rankSmallest);
-                            // System.err.println("Rank " + rank + " is blocking the transmission to " + rankSmallest);
-                        }
-                    }
+                    this.inversionsTracker.process(this.ownId, this.generalPacketCounter, queuedRanks, rank, q);
                     return p;
                 }
             }
             return null;
         } catch (Exception e){
+            e.printStackTrace(System.err);
             return null;
         } finally {
             this.reentrantLock.unlock();

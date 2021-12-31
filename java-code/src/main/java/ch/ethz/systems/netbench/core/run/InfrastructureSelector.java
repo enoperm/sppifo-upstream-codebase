@@ -28,6 +28,7 @@ import ch.ethz.systems.netbench.xpt.sppifo.ports.Greedy.GreedyOutputPortGenerato
 import ch.ethz.systems.netbench.xpt.sppifo.ports.SPPIFO_WFQ.WFQSPPIFOOutputPortGenerator;
 import ch.ethz.systems.netbench.xpt.sppifo.ports.TailDrop.TailDropOutputPortGenerator;
 import ch.ethz.systems.netbench.xpt.sppifo.ports.PIFO_WFQ.WFQPIFOOutputPortGenerator;
+import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionsTrackerFactory;
 import ch.ethz.systems.netbench.xpt.asaf.routing.priority.PriorityFlowletIntermediaryGenerator;
 import ch.ethz.systems.netbench.xpt.newreno.newrenodctcp.NewRenoDctcpTransportLayerGenerator;
 import ch.ethz.systems.netbench.xpt.newreno.newrenotcp.NewRenoTcpTransportLayerGenerator;
@@ -193,7 +194,13 @@ class InfrastructureSelector {
                         Simulator.getConfiguration().getLongPropertyOrFail("output_port_number_queues"),
                         Simulator.getConfiguration().getLongPropertyOrFail("output_port_max_size_per_queue_packets"),
                         Simulator.getConfiguration().getPropertyOrFail("output_port_initialization"),
-                        Simulator.getConfiguration().getPropertyOrFail("output_port_fix_queue_bounds")
+                        Simulator.getConfiguration().getPropertyOrFail("output_port_fix_queue_bounds"),
+                        InversionsTrackerFactory.newInversionsTracker(
+                            Simulator.getConfiguration().getPropertyOrFail("sppifo_inversion_model")
+                        ),
+                        // TODO: generalize parameter name for queue bound log interval
+                        // TODO: implement common queue bound logging mechanism, only handle this parameter from one place.
+                        Simulator.getConfiguration().getLongPropertyWithDefault("sppifo_queuebound_log_interval", 1)
                 );
 
             case "pifo":

@@ -1,5 +1,7 @@
 package ch.ethz.systems.netbench.xpt.sppifo.ports.Greedy;
 
+import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionsTracker;
+
 import ch.ethz.systems.netbench.core.log.SimulationLogger;
 import ch.ethz.systems.netbench.core.network.Link;
 import ch.ethz.systems.netbench.core.network.NetworkDevice;
@@ -10,21 +12,25 @@ public class GreedyOutputPortGenerator_Advanced extends OutputPortGenerator {
 
     private final long numberQueues;
     private final long sizePerQueuePackets;
+    private final long queueboundTrackingInterval;
+    private final InversionsTracker inversionsTracker;
     private final String initialization;
     private final String fixQueueBounds;
 
-    public GreedyOutputPortGenerator_Advanced(long numberQueues, long sizePerQueuePackets, String initialization, String fixQueueBounds) {
+    public GreedyOutputPortGenerator_Advanced(long numberQueues, long sizePerQueuePackets, String initialization, String fixQueueBounds, InversionsTracker inversionsTracker, long queueboundTrackingInterval) {
         this.numberQueues = numberQueues;
         this.sizePerQueuePackets = sizePerQueuePackets;
         this.initialization = initialization;
         this.fixQueueBounds = fixQueueBounds;
+        this.queueboundTrackingInterval = queueboundTrackingInterval;
+        this.inversionsTracker = inversionsTracker;
         SimulationLogger.logInfo("Port", "GreedyAdvanced(numberQueues=" + numberQueues + ", sizePerQueuePackets=" + sizePerQueuePackets +
                 ", fixQueueBounds =" + fixQueueBounds + ")");
     }
 
     @Override
     public OutputPort generate(NetworkDevice ownNetworkDevice, NetworkDevice towardsNetworkDevice, Link link) {
-        return new GreedyOutputPort_Advanced(ownNetworkDevice, towardsNetworkDevice, link, numberQueues, sizePerQueuePackets, initialization, fixQueueBounds);
+        return new GreedyOutputPort_Advanced(ownNetworkDevice, towardsNetworkDevice, link, numberQueues, sizePerQueuePackets, initialization, fixQueueBounds, inversionsTracker, queueboundTrackingInterval);
     }
 
 }

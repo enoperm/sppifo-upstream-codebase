@@ -1,5 +1,7 @@
 package ch.ethz.systems.netbench.xpt.sppifo.ports.Greedy;
 
+import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionsTracker;
+
 import ch.ethz.systems.netbench.core.network.Link;
 import ch.ethz.systems.netbench.core.network.NetworkDevice;
 import ch.ethz.systems.netbench.core.network.OutputPort;
@@ -8,8 +10,8 @@ import ch.ethz.systems.netbench.core.network.Packet;
 
 public class GreedyOutputPort_Advanced extends OutputPort {
 
-    public GreedyOutputPort_Advanced(NetworkDevice ownNetworkDevice, NetworkDevice targetNetworkDevice, Link link, long numberQueues, long sizePerQueuePackets, String initialization, String fixQueueBounds) {
-        super(ownNetworkDevice, targetNetworkDevice, link, new GreedyQueue_Advanced(numberQueues, sizePerQueuePackets, ownNetworkDevice, initialization, fixQueueBounds));
+    public GreedyOutputPort_Advanced(NetworkDevice ownNetworkDevice, NetworkDevice targetNetworkDevice, Link link, long numberQueues, long sizePerQueuePackets, String initialization, String fixQueueBounds, InversionsTracker inversionsTracker, long queueboundTrackingInterval) {
+        super(ownNetworkDevice, targetNetworkDevice, link, new GreedyQueue_Advanced(numberQueues, sizePerQueuePackets, ownNetworkDevice, initialization, fixQueueBounds, inversionsTracker, queueboundTrackingInterval));
     }
 
     /**
@@ -24,5 +26,4 @@ public class GreedyOutputPort_Advanced extends OutputPort {
         // Enqueue packet
         potentialEnqueue(packet);
     }
-
 }
