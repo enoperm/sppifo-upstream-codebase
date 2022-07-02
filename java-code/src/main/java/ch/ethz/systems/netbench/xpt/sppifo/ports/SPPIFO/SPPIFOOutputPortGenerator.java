@@ -71,6 +71,11 @@ public class SPPIFOOutputPortGenerator extends OutputPortGenerator {
             adaptationAlgorithm = new SpringAdaptationAlgorithm(this.settings);
             break;
 
+        // Spring heuristic utilizing fill
+        case "spring-queue-fill":
+            adaptationAlgorithm = new SpringQueueFillAdaptationAlgorithm(this.settings);
+            break;
+
         // Static queue bounds:
         case "static":
             adaptationAlgorithm = new StaticBounds(this.settings);

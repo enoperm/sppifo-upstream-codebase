@@ -1,6 +1,6 @@
 package ch.ethz.systems.netbench.xpt.sppifo.utility;
 
-import ch.ethz.systems.netbench.xpt.sppifo.*;
+import ch.ethz.systems.netbench.xpt.sppifo.utility.*;
 import ch.ethz.systems.netbench.core.log.SimulationLogger;
 
 public class InversionsTrackerFactory {

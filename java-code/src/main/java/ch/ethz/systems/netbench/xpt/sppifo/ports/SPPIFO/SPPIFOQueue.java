@@ -14,6 +14,7 @@ import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionsTracker;
 import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionInformation;
 
 import java.util.*;
+import java.util.OptionalInt;
 import java.util.stream.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
@@ -106,6 +107,21 @@ public class SPPIFOQueue implements Queue {
             size += queueList.get(q).size();
         }
         return size;
+    }
+
+    public OptionalInt getQueueCount(int index) {
+        try {
+            this.reentrantLock.lock();
+
+            if(this.queueList.size() >= index) {
+                return OptionalInt.empty();
+            }
+
+            Queue<Object> queue = this.queueList.get(index);
+            return OptionalInt.of(queue.size());
+        } finally {
+            this.reentrantLock.unlock();
+        }
     }
 
     @Override
