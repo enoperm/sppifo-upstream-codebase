@@ -10,6 +10,7 @@ import ch.ethz.systems.netbench.core.log.SimulationLogger;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.AdaptationAlgorithm;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.BoundsInitializationAlgorithm;
 import ch.ethz.systems.netbench.xpt.sppifo.adaptations.InversionTracker;
+import ch.ethz.systems.netbench.xpt.sppifo.adaptations.QueueInspectingAlgorithm;
 import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionsTracker;
 import ch.ethz.systems.netbench.xpt.sppifo.utility.InversionInformation;
 
@@ -61,6 +62,11 @@ public class SPPIFOQueue implements Queue {
                     SimulationLogger.logQueueBound(this.ownId, c, this.queueBounds.get(c));
                 }
             }
+        }
+
+        if(this.adaptationAlgorithm instanceof QueueInspectingAlgorithm) {
+            QueueInspectingAlgorithm qia = (QueueInspectingAlgorithm)this.adaptationAlgorithm;
+            qia.setQueueImplementation(this);
         }
     }
 
