@@ -119,7 +119,7 @@ public class SPPIFOQueue implements Queue {
         try {
             this.reentrantLock.lock();
 
-            if(this.queueList.size() >= index) {
+            if(this.queueList.size() <= index) {
                 return OptionalInt.empty();
             }
 
